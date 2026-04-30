@@ -15,7 +15,6 @@
 			:root {
 			--bg: #05080d;
 			--panel: rgba(12, 18, 28, 0.92);
-			--panel-light: rgba(20, 31, 47, 0.95);
 			--blue: #008cff;
 			--blue-2: #00b7ff;
 			--white: #f4f7fb;
@@ -23,6 +22,7 @@
 			--line: rgba(255, 255, 255, 0.12);
 			--danger: #ff4d4d;
 			--gold: #ffd166;
+			--green: #3ddc97;
 			}
 
 			body {
@@ -269,6 +269,11 @@
 			color: var(--gold);
 			}
 
+			.winner {
+			color: var(--green);
+			font-weight: 800;
+			}
+
 			.tag {
 			display: inline-block;
 			padding: 5px 10px;
@@ -290,12 +295,6 @@
 			background: rgba(255, 209, 102, 0.14);
 			color: #ffe5a3;
 			border-color: rgba(255, 209, 102, 0.4);
-			}
-
-			.tag.late {
-			background: rgba(255, 77, 77, 0.14);
-			color: #ffc4c4;
-			border-color: rgba(255, 77, 77, 0.4);
 			}
 
 			.two-grid {
@@ -340,6 +339,12 @@
 			text-decoration: none;
 			font-weight: 800;
 			box-shadow: 0 0 16px rgba(0, 140, 255, 0.35);
+			}
+
+			.status-line {
+			color: var(--muted);
+			margin-bottom: 10px;
+			font-size: 0.95rem;
 			}
 
 			footer {
@@ -426,10 +431,11 @@
 					<div class="panel-header">
 						<div>
 							<h2>Scolia Tabelle</h2>
-							<p class="small-info">Strich nach Platz 2 und vor den letzten 2 Plätzen ist vorbereitet.</p>
+							<p class="small-info">Wird automatisch aus deinen Google-Sheets-Ergebnissen berechnet.</p>
 						</div>
 						<span class="tag">Scolia</span>
 					</div>
+					<p id="scoliaStatus" class="status-line">Lade Tabelle...</p>
 					<table>
 						<thead>
 							<tr>
@@ -444,74 +450,7 @@
 								<th>Punkte</th>
 							</tr>
 						</thead>
-						<tbody>
-							<tr>
-								<td class="rank">1</td>
-								<td>Spieler 1</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-							</tr>
-							<tr>
-								<td class="rank">2</td>
-								<td>Spieler 2</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-							</tr>
-							<tr class="cut-top">
-								<td class="rank">3</td>
-								<td>Spieler 3</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-							</tr>
-							<tr>
-								<td class="rank">4</td>
-								<td>Spieler 4</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-							</tr>
-							<tr class="cut-bottom">
-								<td class="rank">5</td>
-								<td>Spieler 5</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-							</tr>
-							<tr>
-								<td class="rank">6</td>
-								<td>Spieler 6</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-							</tr>
-						</tbody>
+						<tbody id="scoliaTableBody"></tbody>
 					</table>
 				</div>
 
@@ -519,10 +458,11 @@
 					<div class="panel-header">
 						<div>
 							<h2>AutoDarts Tabelle</h2>
-							<p class="small-info">Gleicher Aufbau wie bei Scolia. Spielerzahl kann später angepasst werden.</p>
+							<p class="small-info">Wird automatisch aus deinen Google-Sheets-Ergebnissen berechnet.</p>
 						</div>
 						<span class="tag">AutoDarts</span>
 					</div>
+					<p id="autodartsStatus" class="status-line">Lade Tabelle...</p>
 					<table>
 						<thead>
 							<tr>
@@ -537,74 +477,7 @@
 								<th>Punkte</th>
 							</tr>
 						</thead>
-						<tbody>
-							<tr>
-								<td class="rank">1</td>
-								<td>Spieler 1</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-							</tr>
-							<tr>
-								<td class="rank">2</td>
-								<td>Spieler 2</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-							</tr>
-							<tr class="cut-top">
-								<td class="rank">3</td>
-								<td>Spieler 3</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-							</tr>
-							<tr>
-								<td class="rank">4</td>
-								<td>Spieler 4</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-							</tr>
-							<tr class="cut-bottom">
-								<td class="rank">5</td>
-								<td>Spieler 5</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-							</tr>
-							<tr>
-								<td class="rank">6</td>
-								<td>Spieler 6</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-								<td>0</td>
-							</tr>
-						</tbody>
+						<tbody id="autodartsTableBody"></tbody>
 					</table>
 				</div>
 			</section>
@@ -614,7 +487,7 @@
 					<div class="panel-header">
 						<div>
 							<h2>Spielplan</h2>
-							<p class="small-info">Da Spieler ihre Termine selbst ausmachen, wird mit Zeiträumen gearbeitet.</p>
+							<p class="small-info">Der Spielplan kann später auch aus einem zweiten Google Sheet geladen werden.</p>
 						</div>
 					</div>
 					<table>
@@ -649,16 +522,6 @@
 									<span class="tag open">Offen</span>
 								</td>
 							</tr>
-							<tr>
-								<td>2</td>
-								<td>Wird noch festgelegt</td>
-								<td>Scolia</td>
-								<td>Spieler 3</td>
-								<td>Spieler 4</td>
-								<td>
-									<span class="tag open">Offen</span>
-								</td>
-							</tr>
 						</tbody>
 					</table>
 				</div>
@@ -669,9 +532,10 @@
 					<div class="panel-header">
 						<div>
 							<h2>Ergebnisse</h2>
-							<p class="small-info">Ergebnisse werden später automatisch für Tabelle und Spielplan verwendet.</p>
+							<p class="small-info">Diese Liste kommt automatisch aus Google Sheets.</p>
 						</div>
 					</div>
+					<p id="resultsStatus" class="status-line">Lade Ergebnisse...</p>
 					<table>
 						<thead>
 							<tr>
@@ -683,28 +547,7 @@
 								<th>Status</th>
 							</tr>
 						</thead>
-						<tbody>
-							<tr>
-								<td>-</td>
-								<td>Scolia</td>
-								<td>Spieler 1</td>
-								<td>6 : 3</td>
-								<td>Spieler 2</td>
-								<td>
-									<span class="tag done">Beendet</span>
-								</td>
-							</tr>
-							<tr>
-								<td>-</td>
-								<td>AutoDarts</td>
-								<td>Spieler 3</td>
-								<td>6 : 5</td>
-								<td>Spieler 4</td>
-								<td>
-									<span class="tag done">Beendet</span>
-								</td>
-							</tr>
-						</tbody>
+						<tbody id="resultsTableBody"></tbody>
 					</table>
 				</div>
 			</section>
@@ -724,8 +567,8 @@
 					</article>
 					<article class="news-card">
 						<div class="date">System</div>
-						<h3>Tabellen werden vorbereitet</h3>
-						<p>Die Tabellen für Scolia und AutoDarts sind vorbereitet. Spieler werden später ergänzt.</p>
+						<h3>Automatische Tabellen aktiv</h3>
+						<p>Ergebnisse aus Google Sheets werden automatisch für Scolia und AutoDarts berechnet.</p>
 					</article>
 				</div>
 			</section>
@@ -747,11 +590,11 @@
 					</div>
 					<div class="rule-card">
 						<h3>Ergebnis melden</h3>
-						<p>Nach dem Spiel wird das Ergebnis auf dem Discord-Server gemeldet. Danach wird es für Tabelle und Spielplan übernommen.</p>
+						<p>Nach dem Spiel wird das Ergebnis auf dem Discord-Server gemeldet. Danach wird es in Google Sheets eingetragen.</p>
 					</div>
 					<div class="rule-card">
 						<h3>Plattformen</h3>
-						<p>Es gibt getrennte Bereiche für Scolia und AutoDarts. Weitere Plattformen können später ergänzt werden.</p>
+						<p>Es gibt getrennte Tabellen für Scolia und AutoDarts.</p>
 					</div>
 					<div class="rule-card">
 						<h3>Average</h3>
@@ -766,6 +609,8 @@
 		</footer>
 
 		<script>
+			const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR9cqFKQxjTBcRuUVivV8uEK4IQwpFZXbi82FjcaKiY8RXPRnbqmfhg0MdW31qJqtv7P2Fn9loUxYFM/pub?output=csv";
+
 			function showPage(pageId, button) {
 			const pages = document.querySelectorAll('.page');
 			const buttons = document.querySelectorAll('.nav-btn');
@@ -777,6 +622,222 @@
 			button.classList.add('active');
 			window.scrollTo({ top: 0, behavior: 'smooth' });
 			}
+
+			function parseCSV(text) {
+			const rows = [];
+			let current = '';
+			let row = [];
+			let insideQuotes = false;
+
+			for (let i = 0; i < text.length; i++) {
+        const char = text[i];
+        const nextChar = text[i + 1];
+
+        if (char === '"' && insideQuotes && nextChar === '"') {
+			current += '"';
+			i++;
+			} else if (char === '"') {
+			insideQuotes = !insideQuotes;
+			} else if (char === ',' && !insideQuotes) {
+			row.push(current.trim());
+			current = '';
+			} else if ((char === '\n' || char === '\r') && !insideQuotes) {
+			if (current || row.length) {
+			row.push(current.trim());
+			rows.push(row);
+			row = [];
+			current = '';
+			}
+			if (char === '\r' && nextChar === '\n') i++;
+			} else {
+			current += char;
+			}
+			}
+
+			if (current || row.length) {
+			row.push(current.trim());
+			rows.push(row);
+			}
+
+			return rows;
+			}
+
+			function normalizePlatform(platform) {
+			const value = String(platform || '').toLowerCase().replace(/\s/g, '');
+			if (value.includes('scolia')) return 'Scolia';
+			if (value.includes('autodarts') || value.includes('auto')) return 'AutoDarts';
+			return platform || 'Unbekannt';
+			}
+
+			function toNumber(value) {
+			const number = Number(String(value || '').replace(',', '.'));
+			return Number.isFinite(number) ? number : 0;
+			}
+
+			function buildResults(rows) {
+			const header = rows[0].map(item => item.toLowerCase());
+			const index = {
+			datum: header.indexOf('datum'),
+			plattform: header.indexOf('plattform'),
+			spielerA: header.indexOf('spieler a'),
+			spielerB: header.indexOf('spieler b'),
+			legsA: header.indexOf('legs a'),
+			legsB: header.indexOf('legs b')
+			};
+
+			return rows.slice(1)
+			.map(row => ({
+			datum: row[index.datum] || '',
+			plattform: normalizePlatform(row[index.plattform] || ''),
+			spielerA: row[index.spielerA] || '',
+			spielerB: row[index.spielerB] || '',
+			legsA: toNumber(row[index.legsA]),
+			legsB: toNumber(row[index.legsB])
+			}))
+			.filter(game => game.spielerA && game.spielerB && game.plattform && (game.legsA > 0 || game.legsB > 0));
+			}
+
+			function calculateTable(games, platformName) {
+			const players = {};
+			const platformGames = games.filter(game => game.plattform === platformName);
+
+			platformGames.forEach(game => {
+			if (!players[game.spielerA]) players[game.spielerA] = createPlayer(game.spielerA);
+			if (!players[game.spielerB]) players[game.spielerB] = createPlayer(game.spielerB);
+
+			const playerA = players[game.spielerA];
+			const playerB = players[game.spielerB];
+
+			playerA.spiele++;
+			playerB.spiele++;
+
+			playerA.legsPlus += game.legsA;
+			playerA.legsMinus += game.legsB;
+			playerB.legsPlus += game.legsB;
+			playerB.legsMinus += game.legsA;
+
+			if (game.legsA > game.legsB) {
+			playerA.siege++;
+			playerB.niederlagen++;
+			playerA.punkte += 2;
+			} else if (game.legsB > game.legsA) {
+			playerB.siege++;
+			playerA.niederlagen++;
+			playerB.punkte += 2;
+			}
+			});
+
+			return Object.values(players).sort((a, b) => {
+			if (b.punkte !== a.punkte) return b.punkte - a.punkte;
+			if (b.siege !== a.siege) return b.siege - a.siege;
+			if ((b.legsPlus - b.legsMinus) !== (a.legsPlus - a.legsMinus)) {
+			return (b.legsPlus - b.legsMinus) - (a.legsPlus - a.legsMinus);
+			}
+			return b.legsPlus - a.legsPlus;
+			});
+			}
+
+			function createPlayer(name) {
+			return {
+			name,
+			spiele: 0,
+			siege: 0,
+			niederlagen: 0,
+			legsPlus: 0,
+			legsMinus: 0,
+			punkte: 0
+			};
+			}
+
+			function renderLeagueTable(tableData, tbodyId, statusId) {
+			const tbody = document.getElementById(tbodyId);
+			const status = document.getElementById(statusId);
+			tbody.innerHTML = '';
+
+			if (!tableData.length) {
+			status.textContent = 'Noch keine Ergebnisse für diese Plattform vorhanden.';
+			return;
+			}
+
+			status.textContent = `${tableData.length} Spieler in der Tabelle.`;
+
+			tableData.forEach((player, index) => {
+			const rank = index + 1;
+			const diff = player.legsPlus - player.legsMinus;
+			const tr = document.createElement('tr');
+
+			if (rank === 3) tr.classList.add('cut-top');
+			if (tableData.length >= 4 && rank === tableData.length - 1) tr.classList.add('cut-bottom');
+
+			tr.innerHTML = `
+			<td class="rank">${rank}</td>
+			<td>${player.name}</td>
+			<td>${player.spiele}</td>
+			<td>${player.siege}</td>
+			<td>${player.niederlagen}</td>
+			<td>${player.legsPlus}</td>
+			<td>${player.legsMinus}</td>
+			<td>${diff > 0 ? '+' + diff : diff}</td>
+			<td>${player.punkte}</td>
+			`;
+
+			tbody.appendChild(tr);
+			});
+			}
+
+			function renderResults(games) {
+			const tbody = document.getElementById('resultsTableBody');
+			const status = document.getElementById('resultsStatus');
+			tbody.innerHTML = '';
+
+			if (!games.length) {
+			status.textContent = 'Noch keine Ergebnisse vorhanden.';
+			return;
+			}
+
+			status.textContent = `${games.length} Ergebnisse geladen.`;
+
+			games.slice().reverse().forEach(game => {
+			const aWon = game.legsA > game.legsB;
+			const bWon = game.legsB > game.legsA;
+			const tr = document.createElement('tr');
+
+			tr.innerHTML = `
+			<td>${game.datum}</td>
+			<td>${game.plattform}</td>
+			<td class="${aWon ? 'winner' : ''}">${game.spielerA}</td>
+			<td>${game.legsA} : ${game.legsB}</td>
+			<td class="${bWon ? 'winner' : ''}">${game.spielerB}</td>
+			<td>
+				<span class="tag done">Beendet</span>
+			</td>
+			`;
+
+			tbody.appendChild(tr);
+			});
+			}
+
+			async function loadData() {
+			try {
+			const response = await fetch(CSV_URL);
+			if (!response.ok) throw new Error('CSV konnte nicht geladen werden.');
+
+			const text = await response.text();
+			const rows = parseCSV(text).filter(row => row.some(cell => cell.trim() !== ''));
+			const games = buildResults(rows);
+
+			renderResults(games);
+			renderLeagueTable(calculateTable(games, 'Scolia'), 'scoliaTableBody', 'scoliaStatus');
+			renderLeagueTable(calculateTable(games, 'AutoDarts'), 'autodartsTableBody', 'autodartsStatus');
+			} catch (error) {
+			document.getElementById('resultsStatus').textContent = 'Fehler beim Laden der Ergebnisse. Prüfe den Google-Sheets-Link.';
+			document.getElementById('scoliaStatus').textContent = 'Tabelle konnte nicht geladen werden.';
+			document.getElementById('autodartsStatus').textContent = 'Tabelle konnte nicht geladen werden.';
+			console.error(error);
+			}
+			}
+
+			loadData();
 		</script>
 	</body>
 </html>
