@@ -376,12 +376,12 @@
 		</header>
 
 		<nav>
-			<button class="nav-btn active" onclick="showPage('start', this)">Start</button>
-			<button class="nav-btn" onclick="showPage('tabellen', this)">Tabellen</button>
-			<button class="nav-btn" onclick="showPage('spielplan', this)">Spielplan</button>
-			<button class="nav-btn" onclick="showPage('ergebnisse', this)">Ergebnisse</button>
-			<button class="nav-btn" onclick="showPage('news', this)">News</button>
-			<button class="nav-btn" onclick="showPage('regeln', this)">Regeln</button>
+			<button type="button" class="nav-btn active" data-page="start">Start</button>
+			<button type="button" class="nav-btn" data-page="tabellen">Tabellen</button>
+			<button type="button" class="nav-btn" data-page="spielplan">Spielplan</button>
+			<button type="button" class="nav-btn" data-page="ergebnisse">Ergebnisse</button>
+			<button type="button" class="nav-btn" data-page="news">News</button>
+			<button type="button" class="nav-btn" data-page="regeln">Regeln</button>
 		</nav>
 
 		<main>
@@ -606,14 +606,23 @@
 			function showPage(pageId, button) {
 			const pages = document.querySelectorAll('.page');
 			const buttons = document.querySelectorAll('.nav-btn');
+			const targetPage = document.getElementById(pageId);
+
+			if (!targetPage) return;
 
 			pages.forEach(page => page.classList.remove('active'));
 			buttons.forEach(btn => btn.classList.remove('active'));
 
-			document.getElementById(pageId).classList.add('active');
-			button.classList.add('active');
+			targetPage.classList.add('active');
+			if (button) button.classList.add('active');
 			window.scrollTo({ top: 0, behavior: 'smooth' });
 			}
+
+			document.querySelectorAll('.nav-btn').forEach(button => {
+			button.addEventListener('click', () => {
+			showPage(button.dataset.page, button);
+			});
+			});
 
 			function parseCSV(text) {
 			const rows = [];
