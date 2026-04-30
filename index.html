@@ -4,6 +4,7 @@
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>JPL Darts Liga</title>
+
 		<style>
 			* {
 			box-sizing: border-box;
@@ -13,10 +14,9 @@
 			}
 
 			:root {
-			--bg: #05080d;
 			--panel: rgba(12, 18, 28, 0.92);
 			--blue: #008cff;
-			--blue-2: #00b7ff;
+			--blue2: #00b7ff;
 			--white: #f4f7fb;
 			--muted: #a9b6c7;
 			--line: rgba(255, 255, 255, 0.12);
@@ -26,21 +26,12 @@
 			}
 
 			body {
-			background:
-			linear-gradient(rgba(2, 5, 10, 0.72), rgba(2, 5, 10, 0.88)),
-			url("background.png") center / cover fixed no-repeat;
 			color: var(--white);
 			min-height: 100vh;
 			line-height: 1.6;
-			}
-
-			body::before {
-			content: "";
-			position: fixed;
-			inset: 0;
-			pointer-events: none;
-			background: radial-gradient(circle at center, rgba(0, 140, 255, 0.15), transparent 45%);
-			z-index: -1;
+			background:
+			linear-gradient(rgba(2, 5, 10, 0.72), rgba(2, 5, 10, 0.9)),
+			url("background.png") center / cover fixed no-repeat;
 			}
 
 			header {
@@ -66,8 +57,6 @@
 
 			header p {
 			color: var(--muted);
-			font-size: 1rem;
-			margin-top: 4px;
 			}
 
 			nav {
@@ -79,13 +68,12 @@
 			gap: 10px;
 			flex-wrap: wrap;
 			padding: 12px;
-			background: rgba(3, 7, 13, 0.95);
+			background: rgba(3, 7, 13, 0.96);
 			border-bottom: 1px solid var(--line);
 			backdrop-filter: blur(10px);
 			}
 
-			nav button,
-			nav a {
+			.nav-btn {
 			cursor: pointer;
 			border: 1px solid rgba(0, 140, 255, 0.35);
 			background: rgba(255, 255, 255, 0.04);
@@ -95,16 +83,12 @@
 			font-weight: 700;
 			transition: 0.2s;
 			text-decoration: none;
-			display: inline-block;
 			}
 
-			nav button:hover,
-			nav button.active,
-			nav a:hover,
-			nav a.active {
+			.nav-btn:hover,
+			.nav-btn.active {
 			background: linear-gradient(135deg, var(--blue), #004d9a);
 			box-shadow: 0 0 16px rgba(0, 140, 255, 0.4);
-			transform: translateY(-1px);
 			}
 
 			main {
@@ -115,8 +99,6 @@
 			.page {
 			display: none;
 			animation: fadeIn 0.25s ease-in-out;
-			scroll-margin-top: 110px;
-			margin-bottom: 32px;
 			}
 
 			.page.active {
@@ -156,7 +138,7 @@
 			}
 
 			.blue-text {
-			color: var(--blue-2);
+			color: var(--blue2);
 			}
 
 			.hero p,
@@ -200,7 +182,7 @@
 
 			.quick-card strong {
 			display: block;
-			color: var(--blue-2);
+			color: var(--blue2);
 			font-size: 1.15rem;
 			margin-bottom: 4px;
 			}
@@ -223,12 +205,16 @@
 			.panel-header h2,
 			.panel h2 {
 			font-size: 1.7rem;
-			color: var(--white);
 			}
 
-			.small-info {
+			.small-info,
+			.status-line {
 			color: var(--muted);
 			font-size: 0.92rem;
+			}
+
+			.status-line {
+			margin-bottom: 10px;
 			}
 
 			table {
@@ -264,7 +250,7 @@
 			}
 
 			.cut-top td {
-			border-top: 3px solid var(--blue-2);
+			border-top: 3px solid var(--blue2);
 			}
 
 			.cut-bottom td {
@@ -317,7 +303,7 @@
 
 			.news-card h3,
 			.rule-card h3 {
-			color: var(--blue-2);
+			color: var(--blue2);
 			margin-bottom: 8px;
 			}
 
@@ -348,12 +334,6 @@
 			box-shadow: 0 0 16px rgba(0, 140, 255, 0.35);
 			}
 
-			.status-line {
-			color: var(--muted);
-			margin-bottom: 10px;
-			font-size: 0.95rem;
-			}
-
 			footer {
 			text-align: center;
 			padding: 24px;
@@ -375,6 +355,7 @@
 			}
 		</style>
 	</head>
+
 	<body>
 		<header>
 			<img class="logo" src="logo.png" alt="JPL Darts Liga Logo" />
@@ -383,12 +364,12 @@
 		</header>
 
 		<nav>
-			<a class="nav-link active" href="#start" data-page="start">Start</a>
-			<a class="nav-link" href="#tabellen" data-page="tabellen">Tabellen</a>
-			<a class="nav-link" href="#spielplan" data-page="spielplan">Spielplan</a>
-			<a class="nav-link" href="#ergebnisse" data-page="ergebnisse">Ergebnisse</a>
-			<a class="nav-link" href="#news" data-page="news">News</a>
-			<a class="nav-link" href="#regeln" data-page="regeln">Regeln</a>
+			<button type="button" class="nav-btn active" data-page="start">Start</button>
+			<button type="button" class="nav-btn" data-page="tabellen">Tabellen</button>
+			<button type="button" class="nav-btn" data-page="spielplan">Spielplan</button>
+			<button type="button" class="nav-btn" data-page="ergebnisse">Ergebnisse</button>
+			<button type="button" class="nav-btn" data-page="news">News</button>
+			<button type="button" class="nav-btn" data-page="regeln">Regeln</button>
 		</nav>
 
 		<main>
@@ -494,7 +475,7 @@
 					<div class="panel-header">
 						<div>
 							<h2>Spielplan</h2>
-							<p class="small-info">Der Spielplan kann später auch aus einem zweiten Google Sheet geladen werden.</p>
+							<p class="small-info">Kommt automatisch aus deinem Spielplan-Google-Sheet.</p>
 						</div>
 					</div>
 					<table>
@@ -607,32 +588,29 @@
 		</footer>
 
 		<script>
-			function showPage(pageId) {
+			const RESULTS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR9cqFKQxjTBcRuUVivV8uEK4IQwpFZXbi82FjcaKiY8RXPRnbqmfhg0MdW31qJqtv7P2Fn9loUxYFM/pub?output=csv";
+			const SCHEDULE_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSVFdkLUs8qGyDd7lsLiRk6yyKr4RsVPk5UpoVXEx8jJvFNsS4e8J51PC6rKeFF91SeYtpzV0cRg3vx/pub?output=csv";
+
+			function initNavigation() {
+			const buttons = document.querySelectorAll('.nav-btn');
 			const pages = document.querySelectorAll('.page');
-			const links = document.querySelectorAll('.nav-link');
+
+			buttons.forEach(button => {
+			button.addEventListener('click', () => {
+			const pageId = button.dataset.page;
 			const targetPage = document.getElementById(pageId);
 
 			if (!targetPage) return;
 
 			pages.forEach(page => page.classList.remove('active'));
-			links.forEach(link => link.classList.remove('active'));
+			buttons.forEach(btn => btn.classList.remove('active'));
 
 			targetPage.classList.add('active');
-			const activeLink = document.querySelector(`.nav-link[data-page="${pageId}"]`);
-			if (activeLink) activeLink.classList.add('active');
-
+			button.classList.add('active');
 			window.scrollTo({ top: 0, behavior: 'smooth' });
+			});
+			});
 			}
-
-			document.querySelectorAll('.nav-link').forEach(link => {
-			link.addEventListener('click', event => {
-			event.preventDefault();
-			showPage(link.dataset.page);
-			});
-			});
-
-			const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR9cqFKQxjTBcRuUVivV8uEK4IQwpFZXbi82FjcaKiY8RXPRnbqmfhg0MdW31qJqtv7P2Fn9loUxYFM/pub?output=csv";
-			const SCHEDULE_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSVFdkLUs8qGyDd7lsLiRk6yyKr4RsVPk5UpoVXEx8jJvFNsS4e8J51PC6rKeFF91SeYtpzV0cRg3vx/pub?output=csv";
 
 			function parseCSV(text) {
 			const rows = [];
@@ -670,7 +648,7 @@
 			rows.push(row);
 			}
 
-			return rows;
+			return rows.filter(row => row.some(cell => String(cell).trim() !== ''));
 			}
 
 			function normalizePlatform(platform) {
@@ -685,15 +663,46 @@
 			return Number.isFinite(number) ? number : 0;
 			}
 
-			function buildSchedule(rows) {
-			const header = rows[0].map(item => item.toLowerCase());
+			function getIndex(header, name) {
+			return header.indexOf(name.toLowerCase());
+			}
+
+			function buildResults(rows) {
+			if (!rows.length) return [];
+
+			const header = rows[0].map(item => String(item).toLowerCase().trim());
 			const index = {
-			spieltag: header.indexOf('spieltag'),
-			zeitraum: header.indexOf('zeitraum'),
-			plattform: header.indexOf('plattform'),
-			spielerA: header.indexOf('spieler a'),
-			spielerB: header.indexOf('spieler b'),
-			status: header.indexOf('status')
+			datum: getIndex(header, 'datum'),
+			plattform: getIndex(header, 'plattform'),
+			spielerA: getIndex(header, 'spieler a'),
+			spielerB: getIndex(header, 'spieler b'),
+			legsA: getIndex(header, 'legs a'),
+			legsB: getIndex(header, 'legs b')
+			};
+
+			return rows.slice(1)
+			.map(row => ({
+			datum: row[index.datum] || '',
+			plattform: normalizePlatform(row[index.plattform] || ''),
+			spielerA: row[index.spielerA] || '',
+			spielerB: row[index.spielerB] || '',
+			legsA: toNumber(row[index.legsA]),
+			legsB: toNumber(row[index.legsB])
+			}))
+			.filter(game => game.spielerA && game.spielerB && game.plattform && (game.legsA > 0 || game.legsB > 0));
+			}
+
+			function buildSchedule(rows) {
+			if (!rows.length) return [];
+
+			const header = rows[0].map(item => String(item).toLowerCase().trim());
+			const index = {
+			spieltag: getIndex(header, 'spieltag'),
+			zeitraum: getIndex(header, 'zeitraum'),
+			plattform: getIndex(header, 'plattform'),
+			spielerA: getIndex(header, 'spieler a'),
+			spielerB: getIndex(header, 'spieler b'),
+			status: getIndex(header, 'status')
 			};
 
 			return rows.slice(1)
@@ -708,27 +717,16 @@
 			.filter(game => game.spieltag && game.spielerA && game.spielerB);
 			}
 
-			function buildResults(rows) {
-			const header = rows[0].map(item => item.toLowerCase());
-			const index = {
-			datum: header.indexOf('datum'),
-			plattform: header.indexOf('plattform'),
-			spielerA: header.indexOf('spieler a'),
-			spielerB: header.indexOf('spieler b'),
-			legsA: header.indexOf('legs a'),
-			legsB: header.indexOf('legs b')
+			function createPlayer(name) {
+			return {
+			name,
+			spiele: 0,
+			siege: 0,
+			niederlagen: 0,
+			legsPlus: 0,
+			legsMinus: 0,
+			punkte: 0
 			};
-
-			return rows.slice(1)
-			.map(row => ({
-			datum: row[index.datum] || '',
-			plattform: normalizePlatform(row[index.plattform] || ''),
-			spielerA: row[index.spielerA] || '',
-			spielerB: row[index.spielerB] || '',
-			legsA: toNumber(row[index.legsA]),
-			legsB: toNumber(row[index.legsB])
-			}))
-			.filter(game => game.spielerA && game.spielerB && game.plattform && (game.legsA > 0 || game.legsB > 0));
 			}
 
 			function calculateTable(games, platformName) {
@@ -771,18 +769,6 @@
 			});
 			}
 
-			function createPlayer(name) {
-			return {
-			name,
-			spiele: 0,
-			siege: 0,
-			niederlagen: 0,
-			legsPlus: 0,
-			legsMinus: 0,
-			punkte: 0
-			};
-			}
-
 			function renderLeagueTable(tableData, tbodyId, statusId) {
 			const tbody = document.getElementById(tbodyId);
 			const status = document.getElementById(statusId);
@@ -813,37 +799,6 @@
 			<td>${player.legsMinus}</td>
 			<td>${diff > 0 ? '+' + diff : diff}</td>
 			<td>${player.punkte}</td>
-			`;
-
-			tbody.appendChild(tr);
-			});
-			}
-
-			function renderSchedule(scheduleGames) {
-			const tbody = document.getElementById('scheduleTableBody');
-			tbody.innerHTML = '';
-
-			if (!scheduleGames.length) {
-			tbody.innerHTML = '<tr>
-				<td colspan="6">Noch kein Spielplan vorhanden.</td>
-			</tr>';
-			return;
-			}
-
-			scheduleGames.forEach(game => {
-			const statusLower = String(game.status || '').toLowerCase();
-			const statusClass = statusLower.includes('gespielt') || statusLower.includes('beendet') ? 'done' : 'open';
-			const tr = document.createElement('tr');
-
-			tr.innerHTML = `
-			<td>${game.spieltag}</td>
-			<td>${game.zeitraum}</td>
-			<td>${game.plattform}</td>
-			<td>${game.spielerA}</td>
-			<td>${game.spielerB}</td>
-			<td>
-				<span class="tag ${statusClass}">${game.status}</span>
-			</td>
 			`;
 
 			tbody.appendChild(tr);
@@ -882,35 +837,44 @@
 			});
 			}
 
-			async function loadSchedule() {
-			if (!SCHEDULE_CSV_URL || SCHEDULE_CSV_URL === 'HIER_SPIELPLAN_CSV_LINK_EINFUEGEN') {
-			renderSchedule([]);
+			function renderSchedule(scheduleGames) {
+			const tbody = document.getElementById('scheduleTableBody');
+			tbody.innerHTML = '';
+
+			if (!scheduleGames.length) {
+			tbody.innerHTML = '<tr>
+				<td colspan="6">Noch kein Spielplan vorhanden.</td>
+			</tr>';
 			return;
 			}
 
+			scheduleGames.forEach(game => {
+			const statusLower = String(game.status || '').toLowerCase();
+			const statusClass = statusLower.includes('gespielt') || statusLower.includes('beendet') ? 'done' : 'open';
+			const tr = document.createElement('tr');
+
+			tr.innerHTML = `
+			<td>${game.spieltag}</td>
+			<td>${game.zeitraum}</td>
+			<td>${game.plattform}</td>
+			<td>${game.spielerA}</td>
+			<td>${game.spielerB}</td>
+			<td>
+				<span class="tag ${statusClass}">${game.status}</span>
+			</td>
+			`;
+
+			tbody.appendChild(tr);
+			});
+			}
+
+			async function loadResultsData() {
 			try {
-			const response = await fetch(SCHEDULE_CSV_URL);
-			if (!response.ok) throw new Error('Spielplan-CSV konnte nicht geladen werden.');
+			const response = await fetch(RESULTS_CSV_URL);
+			if (!response.ok) throw new Error('Ergebnis-CSV konnte nicht geladen werden.');
 
 			const text = await response.text();
-			const rows = parseCSV(text).filter(row => row.some(cell => cell.trim() !== ''));
-			const scheduleGames = buildSchedule(rows);
-			renderSchedule(scheduleGames);
-			} catch (error) {
-			document.getElementById('scheduleTableBody').innerHTML = '<tr>
-				<td colspan="6">Spielplan konnte nicht geladen werden. Prüfe den Google-Sheets-Link.</td>
-			</tr>';
-			console.error(error);
-			}
-			}
-
-			async function loadData() {
-			try {
-			const response = await fetch(CSV_URL);
-			if (!response.ok) throw new Error('CSV konnte nicht geladen werden.');
-
-			const text = await response.text();
-			const rows = parseCSV(text).filter(row => row.some(cell => cell.trim() !== ''));
+			const rows = parseCSV(text);
 			const games = buildResults(rows);
 
 			renderResults(games);
@@ -924,8 +888,29 @@
 			}
 			}
 
-			loadData();
-			loadSchedule();
+			async function loadScheduleData() {
+			try {
+			const response = await fetch(SCHEDULE_CSV_URL);
+			if (!response.ok) throw new Error('Spielplan-CSV konnte nicht geladen werden.');
+
+			const text = await response.text();
+			const rows = parseCSV(text);
+			const scheduleGames = buildSchedule(rows);
+
+			renderSchedule(scheduleGames);
+			} catch (error) {
+			document.getElementById('scheduleTableBody').innerHTML = '<tr>
+				<td colspan="6">Spielplan konnte nicht geladen werden. Prüfe den Google-Sheets-Link.</td>
+			</tr>';
+			console.error(error);
+			}
+			}
+
+			document.addEventListener('DOMContentLoaded', () => {
+			initNavigation();
+			loadResultsData();
+			loadScheduleData();
+			});
 		</script>
 	</body>
 </html>
