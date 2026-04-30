@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Spieltage - JPL Darts Liga</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <img class="logo" src="logo.png" alt="JPL Darts Liga Logo" />
+    <h1>JPL Darts Liga</h1>
+    <p>Online Darts Liga für Scolia und AutoDarts</p>
+  </header>
+
+  <nav>
+    <a href="index.html" class="">Start</a>
+    <a href="tabellen.html" class="">Tabellen</a>
+    <a href="spieltage.html" class="active">Spieltage</a>
+    <a href="news.html" class="">News</a>
+    <a href="regeln.html" class="">Regeln</a>
+  </nav>
+
+  <main>
+    <section>
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Spieltage</h2>
+            <p class="small-info">Hier stehen offene Spiele und gespielte Ergebnisse zusammen.</p>
+          </div>
+        </div>
+        <p id="matchdaysStatus" class="status-line">Lade Spieltage...</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Spieltag</th>
+              <th>Zeitraum</th>
+              <th>Plattform</th>
+              <th>Spieler A</th>
+              <th>Ergebnis</th>
+              <th>Spieler B</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="matchdaysTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>© JPL Darts Liga · Website für GitHub Pages vorbereitet</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

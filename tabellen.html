@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tabellen - JPL Darts Liga</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <img class="logo" src="logo.png" alt="JPL Darts Liga Logo" />
+    <h1>JPL Darts Liga</h1>
+    <p>Online Darts Liga für Scolia und AutoDarts</p>
+  </header>
+
+  <nav>
+    <a href="index.html" class="">Start</a>
+    <a href="tabellen.html" class="active">Tabellen</a>
+    <a href="spieltage.html" class="">Spieltage</a>
+    <a href="news.html" class="">News</a>
+    <a href="regeln.html" class="">Regeln</a>
+  </nav>
+
+  <main>
+    <section>
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Scolia Tabelle</h2>
+            <p class="small-info">Wird automatisch aus deinem Google Sheet berechnet.</p>
+          </div>
+          <span class="tag">Scolia</span>
+        </div>
+        <p id="scoliaStatus" class="status-line">Lade Tabelle...</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Platz</th>
+              <th>Spieler</th>
+              <th>Spiele</th>
+              <th>Siege</th>
+              <th>Niederlagen</th>
+              <th>Legs +</th>
+              <th>Legs -</th>
+              <th>Leg-Diff.</th>
+              <th>Punkte</th>
+            </tr>
+          </thead>
+          <tbody id="scoliaTableBody"></tbody>
+        </table>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>AutoDarts Tabelle</h2>
+            <p class="small-info">Wird automatisch aus deinem Google Sheet berechnet.</p>
+          </div>
+          <span class="tag">AutoDarts</span>
+        </div>
+        <p id="autodartsStatus" class="status-line">Lade Tabelle...</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Platz</th>
+              <th>Spieler</th>
+              <th>Spiele</th>
+              <th>Siege</th>
+              <th>Niederlagen</th>
+              <th>Legs +</th>
+              <th>Legs -</th>
+              <th>Leg-Diff.</th>
+              <th>Punkte</th>
+            </tr>
+          </thead>
+          <tbody id="autodartsTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>© JPL Darts Liga · Website für GitHub Pages vorbereitet</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
