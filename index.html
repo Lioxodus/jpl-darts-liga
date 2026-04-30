@@ -1,770 +1,782 @@
 <!DOCTYPE html>
 <html lang="de">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>JPL Darts Liga</title>
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: Arial, Helvetica, sans-serif;
-    }
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>JPL Darts Liga</title>
+		<style>
+			* {
+			box-sizing: border-box;
+			margin: 0;
+			padding: 0;
+			font-family: Arial, Helvetica, sans-serif;
+			}
 
-    :root {
-      --bg: #05080d;
-      --panel: rgba(12, 18, 28, 0.92);
-      --panel-light: rgba(20, 31, 47, 0.95);
-      --blue: #008cff;
-      --blue-2: #00b7ff;
-      --white: #f4f7fb;
-      --muted: #a9b6c7;
-      --line: rgba(255, 255, 255, 0.12);
-      --danger: #ff4d4d;
-      --gold: #ffd166;
-    }
+			:root {
+			--bg: #05080d;
+			--panel: rgba(12, 18, 28, 0.92);
+			--panel-light: rgba(20, 31, 47, 0.95);
+			--blue: #008cff;
+			--blue-2: #00b7ff;
+			--white: #f4f7fb;
+			--muted: #a9b6c7;
+			--line: rgba(255, 255, 255, 0.12);
+			--danger: #ff4d4d;
+			--gold: #ffd166;
+			}
 
-    body {
-      background:
-        linear-gradient(rgba(2, 5, 10, 0.72), rgba(2, 5, 10, 0.88)),
-        url("background.png") center / cover fixed no-repeat;
-      color: var(--white);
-      min-height: 100vh;
-      line-height: 1.6;
-    }
+			body {
+			background:
+			linear-gradient(rgba(2, 5, 10, 0.72), rgba(2, 5, 10, 0.88)),
+			url("background.png") center / cover fixed no-repeat;
+			color: var(--white);
+			min-height: 100vh;
+			line-height: 1.6;
+			}
 
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      background: radial-gradient(circle at center, rgba(0, 140, 255, 0.15), transparent 45%);
-      z-index: -1;
-    }
+			body::before {
+			content: "";
+			position: fixed;
+			inset: 0;
+			pointer-events: none;
+			background: radial-gradient(circle at center, rgba(0, 140, 255, 0.15), transparent 45%);
+			z-index: -1;
+			}
 
-    header {
-      padding: 28px 18px 16px;
-      text-align: center;
-      background: rgba(0, 0, 0, 0.45);
-      border-bottom: 1px solid var(--line);
-    }
+			header {
+			padding: 28px 18px 16px;
+			text-align: center;
+			background: rgba(0, 0, 0, 0.45);
+			border-bottom: 1px solid var(--line);
+			}
 
-    .logo {
-      width: 150px;
-      max-width: 42vw;
-      margin-bottom: 10px;
-      filter: drop-shadow(0 0 18px rgba(0, 140, 255, 0.55));
-    }
+			.logo {
+			width: 150px;
+			max-width: 42vw;
+			margin-bottom: 10px;
+			filter: drop-shadow(0 0 18px rgba(0, 140, 255, 0.55));
+			}
 
-    header h1 {
-      font-size: clamp(2rem, 5vw, 4rem);
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      text-shadow: 0 0 14px rgba(0, 140, 255, 0.7);
-    }
+			header h1 {
+			font-size: clamp(2rem, 5vw, 4rem);
+			letter-spacing: 2px;
+			text-transform: uppercase;
+			text-shadow: 0 0 14px rgba(0, 140, 255, 0.7);
+			}
 
-    header p {
-      color: var(--muted);
-      font-size: 1rem;
-      margin-top: 4px;
-    }
+			header p {
+			color: var(--muted);
+			font-size: 1rem;
+			margin-top: 4px;
+			}
 
-    nav {
-      position: sticky;
-      top: 0;
-      z-index: 20;
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      flex-wrap: wrap;
-      padding: 12px;
-      background: rgba(3, 7, 13, 0.95);
-      border-bottom: 1px solid var(--line);
-      backdrop-filter: blur(10px);
-    }
+			nav {
+			position: sticky;
+			top: 0;
+			z-index: 20;
+			display: flex;
+			justify-content: center;
+			gap: 10px;
+			flex-wrap: wrap;
+			padding: 12px;
+			background: rgba(3, 7, 13, 0.95);
+			border-bottom: 1px solid var(--line);
+			backdrop-filter: blur(10px);
+			}
 
-    nav button {
-      cursor: pointer;
-      border: 1px solid rgba(0, 140, 255, 0.35);
-      background: rgba(255, 255, 255, 0.04);
-      color: var(--white);
-      padding: 9px 14px;
-      border-radius: 999px;
-      font-weight: 700;
-      transition: 0.2s;
-    }
+			nav button {
+			cursor: pointer;
+			border: 1px solid rgba(0, 140, 255, 0.35);
+			background: rgba(255, 255, 255, 0.04);
+			color: var(--white);
+			padding: 9px 14px;
+			border-radius: 999px;
+			font-weight: 700;
+			transition: 0.2s;
+			}
 
-    nav button:hover,
-    nav button.active {
-      background: linear-gradient(135deg, var(--blue), #004d9a);
-      box-shadow: 0 0 16px rgba(0, 140, 255, 0.4);
-      transform: translateY(-1px);
-    }
+			nav button:hover,
+			nav button.active {
+			background: linear-gradient(135deg, var(--blue), #004d9a);
+			box-shadow: 0 0 16px rgba(0, 140, 255, 0.4);
+			transform: translateY(-1px);
+			}
 
-    main {
-      width: min(1160px, 94%);
-      margin: 28px auto 45px;
-    }
+			main {
+			width: min(1160px, 94%);
+			margin: 28px auto 45px;
+			}
 
-    .page {
-      display: none;
-      animation: fadeIn 0.25s ease-in-out;
-    }
+			.page {
+			display: none;
+			animation: fadeIn 0.25s ease-in-out;
+			}
 
-    .page.active {
-      display: block;
-    }
+			.page.active {
+			display: block;
+			}
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(8px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+			@keyframes fadeIn {
+			from { opacity: 0; transform: translateY(8px); }
+			to { opacity: 1; transform: translateY(0); }
+			}
 
-    .hero,
-    .panel,
-    .news-card,
-    .rule-card {
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: 20px;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
-    }
+			.hero,
+			.panel,
+			.news-card,
+			.rule-card {
+			background: var(--panel);
+			border: 1px solid var(--line);
+			border-radius: 20px;
+			box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+			}
 
-    .hero {
-      padding: 32px;
-      min-height: 280px;
-      display: grid;
-      grid-template-columns: 1.5fr 0.8fr;
-      gap: 20px;
-      align-items: center;
-      overflow: hidden;
-    }
+			.hero {
+			padding: 32px;
+			min-height: 280px;
+			display: grid;
+			grid-template-columns: 1.5fr 0.8fr;
+			gap: 20px;
+			align-items: center;
+			overflow: hidden;
+			}
 
-    .hero h2,
-    .page-title {
-      font-size: clamp(1.8rem, 4vw, 3rem);
-      line-height: 1.1;
-      margin-bottom: 12px;
-    }
+			.hero h2,
+			.page-title {
+			font-size: clamp(1.8rem, 4vw, 3rem);
+			line-height: 1.1;
+			margin-bottom: 12px;
+			}
 
-    .blue-text {
-      color: var(--blue-2);
-    }
+			.blue-text {
+			color: var(--blue-2);
+			}
 
-    .hero p,
-    .panel p,
-    .rule-card p,
-    .news-card p {
-      color: var(--muted);
-    }
+			.hero p,
+			.panel p,
+			.rule-card p,
+			.news-card p {
+			color: var(--muted);
+			}
 
-    .hero-badge {
-      display: inline-block;
-      margin-bottom: 12px;
-      padding: 6px 12px;
-      border-radius: 999px;
-      background: rgba(0, 140, 255, 0.14);
-      border: 1px solid rgba(0, 140, 255, 0.4);
-      color: #d8efff;
-      font-weight: 700;
-    }
+			.hero-badge {
+			display: inline-block;
+			margin-bottom: 12px;
+			padding: 6px 12px;
+			border-radius: 999px;
+			background: rgba(0, 140, 255, 0.14);
+			border: 1px solid rgba(0, 140, 255, 0.4);
+			color: #d8efff;
+			font-weight: 700;
+			}
 
-    .hero-logo {
-      width: 100%;
-      max-width: 310px;
-      justify-self: center;
-      filter: drop-shadow(0 0 28px rgba(0, 140, 255, 0.45));
-    }
+			.hero-logo {
+			width: 100%;
+			max-width: 310px;
+			justify-self: center;
+			filter: drop-shadow(0 0 28px rgba(0, 140, 255, 0.45));
+			}
 
-    .quick-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-      gap: 16px;
-      margin-top: 18px;
-    }
+			.quick-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+			gap: 16px;
+			margin-top: 18px;
+			}
 
-    .quick-card {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      padding: 18px;
-    }
+			.quick-card {
+			background: rgba(255, 255, 255, 0.05);
+			border: 1px solid var(--line);
+			border-radius: 16px;
+			padding: 18px;
+			}
 
-    .quick-card strong {
-      display: block;
-      color: var(--blue-2);
-      font-size: 1.15rem;
-      margin-bottom: 4px;
-    }
+			.quick-card strong {
+			display: block;
+			color: var(--blue-2);
+			font-size: 1.15rem;
+			margin-bottom: 4px;
+			}
 
-    .panel {
-      padding: 24px;
-      margin-bottom: 22px;
-      overflow-x: auto;
-    }
+			.panel {
+			padding: 24px;
+			margin-bottom: 22px;
+			overflow-x: auto;
+			}
 
-    .panel-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: end;
-      gap: 14px;
-      margin-bottom: 16px;
-      flex-wrap: wrap;
-    }
+			.panel-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: end;
+			gap: 14px;
+			margin-bottom: 16px;
+			flex-wrap: wrap;
+			}
 
-    .panel-header h2,
-    .panel h2 {
-      font-size: 1.7rem;
-      color: var(--white);
-    }
+			.panel-header h2,
+			.panel h2 {
+			font-size: 1.7rem;
+			color: var(--white);
+			}
 
-    .small-info {
-      color: var(--muted);
-      font-size: 0.92rem;
-    }
+			.small-info {
+			color: var(--muted);
+			font-size: 0.92rem;
+			}
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 760px;
-      overflow: hidden;
-      border-radius: 14px;
-    }
+			table {
+			width: 100%;
+			border-collapse: collapse;
+			min-width: 760px;
+			overflow: hidden;
+			border-radius: 14px;
+			}
 
-    th,
-    td {
-      padding: 12px 13px;
-      text-align: left;
-      border-bottom: 1px solid var(--line);
-      white-space: nowrap;
-    }
+			th,
+			td {
+			padding: 12px 13px;
+			text-align: left;
+			border-bottom: 1px solid var(--line);
+			white-space: nowrap;
+			}
 
-    th {
-      background: rgba(0, 140, 255, 0.16);
-      color: #dcefff;
-      font-size: 0.92rem;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
+			th {
+			background: rgba(0, 140, 255, 0.16);
+			color: #dcefff;
+			font-size: 0.92rem;
+			text-transform: uppercase;
+			letter-spacing: 0.5px;
+			}
 
-    td {
-      background: rgba(255, 255, 255, 0.025);
-    }
+			td {
+			background: rgba(255, 255, 255, 0.025);
+			}
 
-    tr:hover td {
-      background: rgba(0, 140, 255, 0.08);
-    }
+			tr:hover td {
+			background: rgba(0, 140, 255, 0.08);
+			}
 
-    .cut-top td {
-      border-top: 3px solid var(--blue-2);
-    }
+			.cut-top td {
+			border-top: 3px solid var(--blue-2);
+			}
 
-    .cut-bottom td {
-      border-top: 3px solid var(--danger);
-    }
+			.cut-bottom td {
+			border-top: 3px solid var(--danger);
+			}
 
-    .rank {
-      font-weight: 800;
-      color: var(--gold);
-    }
+			.rank {
+			font-weight: 800;
+			color: var(--gold);
+			}
 
-    .tag {
-      display: inline-block;
-      padding: 5px 10px;
-      border-radius: 999px;
-      font-size: 0.82rem;
-      font-weight: 800;
-      background: rgba(0, 140, 255, 0.2);
-      color: #d8efff;
-      border: 1px solid rgba(0, 140, 255, 0.35);
-    }
+			.tag {
+			display: inline-block;
+			padding: 5px 10px;
+			border-radius: 999px;
+			font-size: 0.82rem;
+			font-weight: 800;
+			background: rgba(0, 140, 255, 0.2);
+			color: #d8efff;
+			border: 1px solid rgba(0, 140, 255, 0.35);
+			}
 
-    .tag.done {
-      background: rgba(61, 220, 151, 0.16);
-      color: #bfffe4;
-      border-color: rgba(61, 220, 151, 0.35);
-    }
+			.tag.done {
+			background: rgba(61, 220, 151, 0.16);
+			color: #bfffe4;
+			border-color: rgba(61, 220, 151, 0.35);
+			}
 
-    .tag.open {
-      background: rgba(255, 209, 102, 0.14);
-      color: #ffe5a3;
-      border-color: rgba(255, 209, 102, 0.4);
-    }
+			.tag.open {
+			background: rgba(255, 209, 102, 0.14);
+			color: #ffe5a3;
+			border-color: rgba(255, 209, 102, 0.4);
+			}
 
-    .tag.late {
-      background: rgba(255, 77, 77, 0.14);
-      color: #ffc4c4;
-      border-color: rgba(255, 77, 77, 0.4);
-    }
+			.tag.late {
+			background: rgba(255, 77, 77, 0.14);
+			color: #ffc4c4;
+			border-color: rgba(255, 77, 77, 0.4);
+			}
 
-    .two-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 18px;
-    }
+			.two-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+			gap: 18px;
+			}
 
-    .news-card,
-    .rule-card {
-      padding: 20px;
-    }
+			.news-card,
+			.rule-card {
+			padding: 20px;
+			}
 
-    .news-card h3,
-    .rule-card h3 {
-      color: var(--blue-2);
-      margin-bottom: 8px;
-    }
+			.news-card h3,
+			.rule-card h3 {
+			color: var(--blue-2);
+			margin-bottom: 8px;
+			}
 
-    .date {
-      color: var(--gold);
-      font-size: 0.9rem;
-      font-weight: 800;
-      margin-bottom: 7px;
-    }
+			.date {
+			color: var(--gold);
+			font-size: 0.9rem;
+			font-weight: 800;
+			margin-bottom: 7px;
+			}
 
-    .discord-box {
-      margin-top: 18px;
-      padding: 18px;
-      border-radius: 16px;
-      background: rgba(0, 140, 255, 0.12);
-      border: 1px solid rgba(0, 140, 255, 0.35);
-    }
+			.discord-box {
+			margin-top: 18px;
+			padding: 18px;
+			border-radius: 16px;
+			background: rgba(0, 140, 255, 0.12);
+			border: 1px solid rgba(0, 140, 255, 0.35);
+			}
 
-    .btn {
-      display: inline-block;
-      margin-top: 14px;
-      padding: 10px 16px;
-      border-radius: 999px;
-      background: linear-gradient(135deg, var(--blue), #004d9a);
-      color: white;
-      text-decoration: none;
-      font-weight: 800;
-      box-shadow: 0 0 16px rgba(0, 140, 255, 0.35);
-    }
+			.btn {
+			display: inline-block;
+			margin-top: 14px;
+			padding: 10px 16px;
+			border-radius: 999px;
+			background: linear-gradient(135deg, var(--blue), #004d9a);
+			color: white;
+			text-decoration: none;
+			font-weight: 800;
+			box-shadow: 0 0 16px rgba(0, 140, 255, 0.35);
+			}
 
-    footer {
-      text-align: center;
-      padding: 24px;
-      background: rgba(0, 0, 0, 0.55);
-      color: var(--muted);
-      border-top: 1px solid var(--line);
-    }
+			footer {
+			text-align: center;
+			padding: 24px;
+			background: rgba(0, 0, 0, 0.55);
+			color: var(--muted);
+			border-top: 1px solid var(--line);
+			}
 
-    @media (max-width: 800px) {
-      .hero {
-        grid-template-columns: 1fr;
-        text-align: center;
-        padding: 24px;
-      }
+			@media (max-width: 800px) {
+			.hero {
+			grid-template-columns: 1fr;
+			text-align: center;
+			padding: 24px;
+			}
 
-      .hero-logo {
-        max-width: 210px;
-      }
-    }
-  </style>
-</head>
-<body>
-  <header>
-    <img class="logo" src="logo.png" alt="JPL Darts Liga Logo" />
-    <h1>JPL Darts Liga</h1>
-    <p>Online Darts Liga für Scolia und AutoDarts</p>
-  </header>
+			.hero-logo {
+			max-width: 210px;
+			}
+			}
+		</style>
+	</head>
+	<body>
+		<header>
+			<img class="logo" src="logo.png" alt="JPL Darts Liga Logo" />
+			<h1>JPL Darts Liga</h1>
+			<p>Online Darts Liga für Scolia und AutoDarts</p>
+		</header>
 
-  <nav>
-    <button class="nav-btn active" onclick="showPage('start', this)">Start</button>
-    <button class="nav-btn" onclick="showPage('tabellen', this)">Tabellen</button>
-    <button class="nav-btn" onclick="showPage('spielplan', this)">Spielplan</button>
-    <button class="nav-btn" onclick="showPage('ergebnisse', this)">Ergebnisse</button>
-    <button class="nav-btn" onclick="showPage('news', this)">News</button>
-    <button class="nav-btn" onclick="showPage('regeln', this)">Regeln</button>
-  </nav>
+		<nav>
+			<button class="nav-btn active" onclick="showPage('start', this)">Start</button>
+			<button class="nav-btn" onclick="showPage('tabellen', this)">Tabellen</button>
+			<button class="nav-btn" onclick="showPage('spielplan', this)">Spielplan</button>
+			<button class="nav-btn" onclick="showPage('ergebnisse', this)">Ergebnisse</button>
+			<button class="nav-btn" onclick="showPage('news', this)">News</button>
+			<button class="nav-btn" onclick="showPage('regeln', this)">Regeln</button>
+		</nav>
 
-  <main>
-    <section id="start" class="page active">
-      <div class="hero">
-        <div>
-          <span class="hero-badge">Neue Online-Dartliga</span>
-          <h2>Willkommen in der <span class="blue-text">JPL Darts Liga</span></h2>
-          <p>
-            Die JPL Darts Liga ist eine neu gegründete Online-Dartliga. Gespielt wird einzeln.
-            Spieler können je nach Plattform in der Scolia-Liga oder AutoDarts-Liga antreten.
-            Termine werden von den Spielern selbst abgesprochen, die Liga gibt dafür einen Zeitraum vor.
-          </p>
-          <div class="discord-box">
-            <strong>Discord als Zentrale</strong>
-            <p>Anmeldung, Terminabsprache, Ergebnisabgabe und News laufen über den Discord-Server.</p>
-            <a class="btn" href="#" onclick="alert('Hier später deinen Discord-Link einfügen.'); return false;">Discord beitreten</a>
-          </div>
-        </div>
-        <img class="hero-logo" src="logo.png" alt="JPL Logo" />
-      </div>
+		<main>
+			<section id="start" class="page active">
+				<div class="hero">
+					<div>
+						<span class="hero-badge">Neue Online-Dartliga</span>
+						<h2>
+							Willkommen in der <span class="blue-text">JPL Darts Liga</span>
+						</h2>
+						<p>
+							Die JPL Darts Liga ist eine neu gegründete Online-Dartliga. Gespielt wird einzeln.
+							Spieler können je nach Plattform in der Scolia-Liga oder AutoDarts-Liga antreten.
+							Termine werden von den Spielern selbst abgesprochen, die Liga gibt dafür einen Zeitraum vor.
+						</p>
+						<div class="discord-box">
+							<strong>Discord als Zentrale</strong>
+							<p>Anmeldung, Terminabsprache, Ergebnisabgabe und News laufen über den Discord-Server.</p>
+							<a class="btn" href="#" onclick="alert('Hier später deinen Discord-Link einfügen.'); return false;">Discord beitreten</a>
+						</div>
+					</div>
+					<img class="hero-logo" src="logo.png" alt="JPL Logo" />
+				</div>
 
-      <div class="quick-grid">
-        <div class="quick-card">
-          <strong>2 Punkte pro Sieg</strong>
-          <p>Ein Sieg bringt 2 Punkte für die Tabelle.</p>
-        </div>
-        <div class="quick-card">
-          <strong>First to 6 Legs</strong>
-          <p>Wer zuerst 6 Legs gewinnt, gewinnt das Spiel.</p>
-        </div>
-        <div class="quick-card">
-          <strong>2 Plattformen</strong>
-          <p>Eigene Tabellen für Scolia und AutoDarts.</p>
-        </div>
-        <div class="quick-card">
-          <strong>Eigene Termine</strong>
-          <p>Spieler sprechen ihre Matches selbst im Zeitraum ab.</p>
-        </div>
-      </div>
-    </section>
+				<div class="quick-grid">
+					<div class="quick-card">
+						<strong>2 Punkte pro Sieg</strong>
+						<p>Ein Sieg bringt 2 Punkte für die Tabelle.</p>
+					</div>
+					<div class="quick-card">
+						<strong>First to 6 Legs</strong>
+						<p>Wer zuerst 6 Legs gewinnt, gewinnt das Spiel.</p>
+					</div>
+					<div class="quick-card">
+						<strong>2 Plattformen</strong>
+						<p>Eigene Tabellen für Scolia und AutoDarts.</p>
+					</div>
+					<div class="quick-card">
+						<strong>Eigene Termine</strong>
+						<p>Spieler sprechen ihre Matches selbst im Zeitraum ab.</p>
+					</div>
+				</div>
+			</section>
 
-    <section id="tabellen" class="page">
-      <div class="panel">
-        <div class="panel-header">
-          <div>
-            <h2>Scolia Tabelle</h2>
-            <p class="small-info">Strich nach Platz 2 und vor den letzten 2 Plätzen ist vorbereitet.</p>
-          </div>
-          <span class="tag">Scolia</span>
-        </div>
-        <table>
-          <thead>
-            <tr>
-              <th>Platz</th>
-              <th>Spieler</th>
-              <th>Spiele</th>
-              <th>Siege</th>
-              <th>Niederlagen</th>
-              <th>Legs +</th>
-              <th>Legs -</th>
-              <th>Leg-Diff.</th>
-              <th>Punkte</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td class="rank">1</td>
-              <td>Spieler 1</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-            </tr>
-            <tr>
-              <td class="rank">2</td>
-              <td>Spieler 2</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-            </tr>
-            <tr class="cut-top">
-              <td class="rank">3</td>
-              <td>Spieler 3</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-            </tr>
-            <tr>
-              <td class="rank">4</td>
-              <td>Spieler 4</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-            </tr>
-            <tr class="cut-bottom">
-              <td class="rank">5</td>
-              <td>Spieler 5</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-            </tr>
-            <tr>
-              <td class="rank">6</td>
-              <td>Spieler 6</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+			<section id="tabellen" class="page">
+				<div class="panel">
+					<div class="panel-header">
+						<div>
+							<h2>Scolia Tabelle</h2>
+							<p class="small-info">Strich nach Platz 2 und vor den letzten 2 Plätzen ist vorbereitet.</p>
+						</div>
+						<span class="tag">Scolia</span>
+					</div>
+					<table>
+						<thead>
+							<tr>
+								<th>Platz</th>
+								<th>Spieler</th>
+								<th>Spiele</th>
+								<th>Siege</th>
+								<th>Niederlagen</th>
+								<th>Legs +</th>
+								<th>Legs -</th>
+								<th>Leg-Diff.</th>
+								<th>Punkte</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td class="rank">1</td>
+								<td>Spieler 1</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+							</tr>
+							<tr>
+								<td class="rank">2</td>
+								<td>Spieler 2</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+							</tr>
+							<tr class="cut-top">
+								<td class="rank">3</td>
+								<td>Spieler 3</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+							</tr>
+							<tr>
+								<td class="rank">4</td>
+								<td>Spieler 4</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+							</tr>
+							<tr class="cut-bottom">
+								<td class="rank">5</td>
+								<td>Spieler 5</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+							</tr>
+							<tr>
+								<td class="rank">6</td>
+								<td>Spieler 6</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
 
-      <div class="panel">
-        <div class="panel-header">
-          <div>
-            <h2>AutoDarts Tabelle</h2>
-            <p class="small-info">Gleicher Aufbau wie bei Scolia. Spielerzahl kann später angepasst werden.</p>
-          </div>
-          <span class="tag">AutoDarts</span>
-        </div>
-        <table>
-          <thead>
-            <tr>
-              <th>Platz</th>
-              <th>Spieler</th>
-              <th>Spiele</th>
-              <th>Siege</th>
-              <th>Niederlagen</th>
-              <th>Legs +</th>
-              <th>Legs -</th>
-              <th>Leg-Diff.</th>
-              <th>Punkte</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td class="rank">1</td>
-              <td>Spieler 1</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-            </tr>
-            <tr>
-              <td class="rank">2</td>
-              <td>Spieler 2</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-            </tr>
-            <tr class="cut-top">
-              <td class="rank">3</td>
-              <td>Spieler 3</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-            </tr>
-            <tr>
-              <td class="rank">4</td>
-              <td>Spieler 4</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-            </tr>
-            <tr class="cut-bottom">
-              <td class="rank">5</td>
-              <td>Spieler 5</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-            </tr>
-            <tr>
-              <td class="rank">6</td>
-              <td>Spieler 6</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-              <td>0</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
+				<div class="panel">
+					<div class="panel-header">
+						<div>
+							<h2>AutoDarts Tabelle</h2>
+							<p class="small-info">Gleicher Aufbau wie bei Scolia. Spielerzahl kann später angepasst werden.</p>
+						</div>
+						<span class="tag">AutoDarts</span>
+					</div>
+					<table>
+						<thead>
+							<tr>
+								<th>Platz</th>
+								<th>Spieler</th>
+								<th>Spiele</th>
+								<th>Siege</th>
+								<th>Niederlagen</th>
+								<th>Legs +</th>
+								<th>Legs -</th>
+								<th>Leg-Diff.</th>
+								<th>Punkte</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td class="rank">1</td>
+								<td>Spieler 1</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+							</tr>
+							<tr>
+								<td class="rank">2</td>
+								<td>Spieler 2</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+							</tr>
+							<tr class="cut-top">
+								<td class="rank">3</td>
+								<td>Spieler 3</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+							</tr>
+							<tr>
+								<td class="rank">4</td>
+								<td>Spieler 4</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+							</tr>
+							<tr class="cut-bottom">
+								<td class="rank">5</td>
+								<td>Spieler 5</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+							</tr>
+							<tr>
+								<td class="rank">6</td>
+								<td>Spieler 6</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+								<td>0</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</section>
 
-    <section id="spielplan" class="page">
-      <div class="panel">
-        <div class="panel-header">
-          <div>
-            <h2>Spielplan</h2>
-            <p class="small-info">Da Spieler ihre Termine selbst ausmachen, wird mit Zeiträumen gearbeitet.</p>
-          </div>
-        </div>
-        <table>
-          <thead>
-            <tr>
-              <th>Spieltag</th>
-              <th>Zeitraum</th>
-              <th>Plattform</th>
-              <th>Spieler A</th>
-              <th>Spieler B</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>1</td>
-              <td>Wird noch festgelegt</td>
-              <td>Scolia</td>
-              <td>Spieler 1</td>
-              <td>Spieler 2</td>
-              <td><span class="tag open">Offen</span></td>
-            </tr>
-            <tr>
-              <td>1</td>
-              <td>Wird noch festgelegt</td>
-              <td>AutoDarts</td>
-              <td>Spieler 1</td>
-              <td>Spieler 2</td>
-              <td><span class="tag open">Offen</span></td>
-            </tr>
-            <tr>
-              <td>2</td>
-              <td>Wird noch festgelegt</td>
-              <td>Scolia</td>
-              <td>Spieler 3</td>
-              <td>Spieler 4</td>
-              <td><span class="tag open">Offen</span></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
+			<section id="spielplan" class="page">
+				<div class="panel">
+					<div class="panel-header">
+						<div>
+							<h2>Spielplan</h2>
+							<p class="small-info">Da Spieler ihre Termine selbst ausmachen, wird mit Zeiträumen gearbeitet.</p>
+						</div>
+					</div>
+					<table>
+						<thead>
+							<tr>
+								<th>Spieltag</th>
+								<th>Zeitraum</th>
+								<th>Plattform</th>
+								<th>Spieler A</th>
+								<th>Spieler B</th>
+								<th>Status</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>1</td>
+								<td>Wird noch festgelegt</td>
+								<td>Scolia</td>
+								<td>Spieler 1</td>
+								<td>Spieler 2</td>
+								<td>
+									<span class="tag open">Offen</span>
+								</td>
+							</tr>
+							<tr>
+								<td>1</td>
+								<td>Wird noch festgelegt</td>
+								<td>AutoDarts</td>
+								<td>Spieler 1</td>
+								<td>Spieler 2</td>
+								<td>
+									<span class="tag open">Offen</span>
+								</td>
+							</tr>
+							<tr>
+								<td>2</td>
+								<td>Wird noch festgelegt</td>
+								<td>Scolia</td>
+								<td>Spieler 3</td>
+								<td>Spieler 4</td>
+								<td>
+									<span class="tag open">Offen</span>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</section>
 
-    <section id="ergebnisse" class="page">
-      <div class="panel">
-        <div class="panel-header">
-          <div>
-            <h2>Ergebnisse</h2>
-            <p class="small-info">Ergebnisse werden später automatisch für Tabelle und Spielplan verwendet.</p>
-          </div>
-        </div>
-        <table>
-          <thead>
-            <tr>
-              <th>Datum</th>
-              <th>Plattform</th>
-              <th>Spieler A</th>
-              <th>Ergebnis</th>
-              <th>Spieler B</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>-</td>
-              <td>Scolia</td>
-              <td>Spieler 1</td>
-              <td>6 : 3</td>
-              <td>Spieler 2</td>
-              <td><span class="tag done">Beendet</span></td>
-            </tr>
-            <tr>
-              <td>-</td>
-              <td>AutoDarts</td>
-              <td>Spieler 3</td>
-              <td>6 : 5</td>
-              <td>Spieler 4</td>
-              <td><span class="tag done">Beendet</span></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
+			<section id="ergebnisse" class="page">
+				<div class="panel">
+					<div class="panel-header">
+						<div>
+							<h2>Ergebnisse</h2>
+							<p class="small-info">Ergebnisse werden später automatisch für Tabelle und Spielplan verwendet.</p>
+						</div>
+					</div>
+					<table>
+						<thead>
+							<tr>
+								<th>Datum</th>
+								<th>Plattform</th>
+								<th>Spieler A</th>
+								<th>Ergebnis</th>
+								<th>Spieler B</th>
+								<th>Status</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>-</td>
+								<td>Scolia</td>
+								<td>Spieler 1</td>
+								<td>6 : 3</td>
+								<td>Spieler 2</td>
+								<td>
+									<span class="tag done">Beendet</span>
+								</td>
+							</tr>
+							<tr>
+								<td>-</td>
+								<td>AutoDarts</td>
+								<td>Spieler 3</td>
+								<td>6 : 5</td>
+								<td>Spieler 4</td>
+								<td>
+									<span class="tag done">Beendet</span>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</section>
 
-    <section id="news" class="page">
-      <h2 class="page-title">News</h2>
-      <div class="two-grid">
-        <article class="news-card">
-          <div class="date">News</div>
-          <h3>JPL Darts Liga gegründet</h3>
-          <p>Die JPL Darts Liga startet als neue Online-Dartliga für Spieler auf Scolia und AutoDarts.</p>
-        </article>
-        <article class="news-card">
-          <div class="date">Info</div>
-          <h3>Anmeldung über Discord</h3>
-          <p>Spieler melden sich über den Discord-Server an und klären ihre Termine selbst im vorgegebenen Zeitraum.</p>
-        </article>
-        <article class="news-card">
-          <div class="date">System</div>
-          <h3>Tabellen werden vorbereitet</h3>
-          <p>Die Tabellen für Scolia und AutoDarts sind vorbereitet. Spieler werden später ergänzt.</p>
-        </article>
-      </div>
-    </section>
+			<section id="news" class="page">
+				<h2 class="page-title">News</h2>
+				<div class="two-grid">
+					<article class="news-card">
+						<div class="date">News</div>
+						<h3>JPL Darts Liga gegründet</h3>
+						<p>Die JPL Darts Liga startet als neue Online-Dartliga für Spieler auf Scolia und AutoDarts.</p>
+					</article>
+					<article class="news-card">
+						<div class="date">Info</div>
+						<h3>Anmeldung über Discord</h3>
+						<p>Spieler melden sich über den Discord-Server an und klären ihre Termine selbst im vorgegebenen Zeitraum.</p>
+					</article>
+					<article class="news-card">
+						<div class="date">System</div>
+						<h3>Tabellen werden vorbereitet</h3>
+						<p>Die Tabellen für Scolia und AutoDarts sind vorbereitet. Spieler werden später ergänzt.</p>
+					</article>
+				</div>
+			</section>
 
-    <section id="regeln" class="page">
-      <h2 class="page-title">Regeln</h2>
-      <div class="two-grid">
-        <div class="rule-card">
-          <h3>Spielmodus</h3>
-          <p>Gespielt wird First to 6 Legs. Wer zuerst 6 Legs erreicht, gewinnt das Match.</p>
-        </div>
-        <div class="rule-card">
-          <h3>Punkte</h3>
-          <p>Ein Sieg bringt 2 Punkte. Niederlagen bringen 0 Punkte.</p>
-        </div>
-        <div class="rule-card">
-          <h3>Terminabsprache</h3>
-          <p>Die Liga gibt einen Zeitraum vor. Die Spieler sprechen ihren genauen Termin selbst untereinander ab.</p>
-        </div>
-        <div class="rule-card">
-          <h3>Ergebnis melden</h3>
-          <p>Nach dem Spiel wird das Ergebnis auf dem Discord-Server gemeldet. Danach wird es für Tabelle und Spielplan übernommen.</p>
-        </div>
-        <div class="rule-card">
-          <h3>Plattformen</h3>
-          <p>Es gibt getrennte Bereiche für Scolia und AutoDarts. Weitere Plattformen können später ergänzt werden.</p>
-        </div>
-        <div class="rule-card">
-          <h3>Average</h3>
-          <p>Average wird aktuell noch nicht in der Tabelle geführt. Das kann später ergänzt werden.</p>
-        </div>
-      </div>
-    </section>
-  </main>
+			<section id="regeln" class="page">
+				<h2 class="page-title">Regeln</h2>
+				<div class="two-grid">
+					<div class="rule-card">
+						<h3>Spielmodus</h3>
+						<p>Gespielt wird First to 6 Legs. Wer zuerst 6 Legs erreicht, gewinnt das Match.</p>
+					</div>
+					<div class="rule-card">
+						<h3>Punkte</h3>
+						<p>Ein Sieg bringt 2 Punkte. Niederlagen bringen 0 Punkte.</p>
+					</div>
+					<div class="rule-card">
+						<h3>Terminabsprache</h3>
+						<p>Die Liga gibt einen Zeitraum vor. Die Spieler sprechen ihren genauen Termin selbst untereinander ab.</p>
+					</div>
+					<div class="rule-card">
+						<h3>Ergebnis melden</h3>
+						<p>Nach dem Spiel wird das Ergebnis auf dem Discord-Server gemeldet. Danach wird es für Tabelle und Spielplan übernommen.</p>
+					</div>
+					<div class="rule-card">
+						<h3>Plattformen</h3>
+						<p>Es gibt getrennte Bereiche für Scolia und AutoDarts. Weitere Plattformen können später ergänzt werden.</p>
+					</div>
+					<div class="rule-card">
+						<h3>Average</h3>
+						<p>Average wird aktuell noch nicht in der Tabelle geführt. Das kann später ergänzt werden.</p>
+					</div>
+				</div>
+			</section>
+		</main>
 
-  <footer>
-    <p>© JPL Darts Liga · Website für GitHub Pages vorbereitet</p>
-  </footer>
+		<footer>
+			<p>© JPL Darts Liga · Website für GitHub Pages vorbereitet</p>
+		</footer>
 
-  <script>
-    function showPage(pageId, button) {
-      const pages = document.querySelectorAll('.page');
-      const buttons = document.querySelectorAll('.nav-btn');
+		<script>
+			function showPage(pageId, button) {
+			const pages = document.querySelectorAll('.page');
+			const buttons = document.querySelectorAll('.nav-btn');
 
-      pages.forEach(page => page.classList.remove('active'));
-      buttons.forEach(btn => btn.classList.remove('active'));
+			pages.forEach(page => page.classList.remove('active'));
+			buttons.forEach(btn => btn.classList.remove('active'));
 
-      document.getElementById(pageId).classList.add('active');
-      button.classList.add('active');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  </script>
-</body>
+			document.getElementById(pageId).classList.add('active');
+			button.classList.add('active');
+			window.scrollTo({ top: 0, behavior: 'smooth' });
+			}
+		</script>
+	</body>
 </html>
