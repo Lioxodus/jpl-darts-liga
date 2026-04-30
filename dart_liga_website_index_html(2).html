@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JPL Darts Liga</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    :root {
+      --bg: #05080d;
+      --panel: rgba(12, 18, 28, 0.92);
+      --blue: #008cff;
+      --blue-2: #00b7ff;
+      --white: #f4f7fb;
+      --muted: #a9b6c7;
+      --line: rgba(255, 255, 255, 0.12);
+      --danger: #ff4d4d;
+      --gold: #ffd166;
+      --green: #3ddc97;
+    }
+
+    body {
+      background:
+        linear-gradient(rgba(2, 5, 10, 0.72), rgba(2, 5, 10, 0.88)),
+        url("background.png") center / cover fixed no-repeat;
+      color: var(--white);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(circle at center, rgba(0, 140, 255, 0.15), transparent 45%);
+      z-index: -1;
+    }
+
+    header {
+      padding: 28px 18px 16px;
+      text-align: center;
+      background: rgba(0, 0, 0, 0.45);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .logo {
+      width: 150px;
+      max-width: 42vw;
+      margin-bottom: 10px;
+      filter: drop-shadow(0 0 18px rgba(0, 140, 255, 0.55));
+    }
+
+    header h1 {
+      font-size: clamp(2rem, 5vw, 4rem);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-shadow: 0 0 14px rgba(0, 140, 255, 0.7);
+    }
+
+    header p {
+      color: var(--muted);
+      font-size: 1rem;
+      margin-top: 4px;
+    }
+
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding: 12px;
+      background: rgba(3, 7, 13, 0.95);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(10px);
+    }
+
+    nav button {
+      cursor: pointer;
+      border: 1px solid rgba(0, 140, 255, 0.35);
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--white);
+      padding: 9px 14px;
+      border-radius: 999px;
+      font-weight: 700;
+      transition: 0.2s;
+    }
+
+    nav button:hover,
+    nav button.active {
+      background: linear-gradient(135deg, var(--blue), #004d9a);
+      box-shadow: 0 0 16px rgba(0, 140, 255, 0.4);
+      transform: translateY(-1px);
+    }
+
+    main {
+      width: min(1160px, 94%);
+      margin: 28px auto 45px;
+    }
+
+    .page {
+      display: none;
+      animation: fadeIn 0.25s ease-in-out;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero,
+    .panel,
+    .news-card,
+    .rule-card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+    }
+
+    .hero {
+      padding: 32px;
+      min-height: 280px;
+      display: grid;
+      grid-template-columns: 1.5fr 0.8fr;
+      gap: 20px;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .hero h2,
+    .page-title {
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      line-height: 1.1;
+      margin-bottom: 12px;
+    }
+
+    .blue-text {
+      color: var(--blue-2);
+    }
+
+    .hero p,
+    .panel p,
+    .rule-card p,
+    .news-card p {
+      color: var(--muted);
+    }
+
+    .hero-badge {
+      display: inline-block;
+      margin-bottom: 12px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(0, 140, 255, 0.14);
+      border: 1px solid rgba(0, 140, 255, 0.4);
+      color: #d8efff;
+      font-weight: 700;
+    }
+
+    .hero-logo {
+      width: 100%;
+      max-width: 310px;
+      justify-self: center;
+      filter: drop-shadow(0 0 28px rgba(0, 140, 255, 0.45));
+    }
+
+    .quick-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 16px;
+      margin-top: 18px;
+    }
+
+    .quick-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 18px;
+    }
+
+    .quick-card strong {
+      display: block;
+      color: var(--blue-2);
+      font-size: 1.15rem;
+      margin-bottom: 4px;
+    }
+
+    .panel {
+      padding: 24px;
+      margin-bottom: 22px;
+      overflow-x: auto;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 14px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .panel-header h2,
+    .panel h2 {
+      font-size: 1.7rem;
+      color: var(--white);
+    }
+
+    .small-info {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 760px;
+      overflow: hidden;
+      border-radius: 14px;
+    }
+
+    th,
+    td {
+      padding: 12px 13px;
+      text-align: left;
+      border-bottom: 1px solid var(--line);
+      white-space: nowrap;
+    }
+
+    th {
+      background: rgba(0, 140, 255, 0.16);
+      color: #dcefff;
+      font-size: 0.92rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    td {
+      background: rgba(255, 255, 255, 0.025);
+    }
+
+    tr:hover td {
+      background: rgba(0, 140, 255, 0.08);
+    }
+
+    .cut-top td {
+      border-top: 3px solid var(--blue-2);
+    }
+
+    .cut-bottom td {
+      border-top: 3px solid var(--danger);
+    }
+
+    .rank {
+      font-weight: 800;
+      color: var(--gold);
+    }
+
+    .winner {
+      color: var(--green);
+      font-weight: 800;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 800;
+      background: rgba(0, 140, 255, 0.2);
+      color: #d8efff;
+      border: 1px solid rgba(0, 140, 255, 0.35);
+    }
+
+    .tag.done {
+      background: rgba(61, 220, 151, 0.16);
+      color: #bfffe4;
+      border-color: rgba(61, 220, 151, 0.35);
+    }
+
+    .tag.open {
+      background: rgba(255, 209, 102, 0.14);
+      color: #ffe5a3;
+      border-color: rgba(255, 209, 102, 0.4);
+    }
+
+    .two-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 18px;
+    }
+
+    .news-card,
+    .rule-card {
+      padding: 20px;
+    }
+
+    .news-card h3,
+    .rule-card h3 {
+      color: var(--blue-2);
+      margin-bottom: 8px;
+    }
+
+    .date {
+      color: var(--gold);
+      font-size: 0.9rem;
+      font-weight: 800;
+      margin-bottom: 7px;
+    }
+
+    .discord-box {
+      margin-top: 18px;
+      padding: 18px;
+      border-radius: 16px;
+      background: rgba(0, 140, 255, 0.12);
+      border: 1px solid rgba(0, 140, 255, 0.35);
+    }
+
+    .btn {
+      display: inline-block;
+      margin-top: 14px;
+      padding: 10px 16px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--blue), #004d9a);
+      color: white;
+      text-decoration: none;
+      font-weight: 800;
+      box-shadow: 0 0 16px rgba(0, 140, 255, 0.35);
+    }
+
+    .status-line {
+      color: var(--muted);
+      margin-bottom: 10px;
+      font-size: 0.95rem;
+    }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      background: rgba(0, 0, 0, 0.55);
+      color: var(--muted);
+      border-top: 1px solid var(--line);
+    }
+
+    @media (max-width: 800px) {
+      .hero {
+        grid-template-columns: 1fr;
+        text-align: center;
+        padding: 24px;
+      }
+
+      .hero-logo {
+        max-width: 210px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img class="logo" src="logo.png" alt="JPL Darts Liga Logo" />
+    <h1>JPL Darts Liga</h1>
+    <p>Online Darts Liga für Scolia und AutoDarts</p>
+  </header>
+
+  <nav>
+    <button class="nav-btn active" onclick="showPage('start', this)">Start</button>
+    <button class="nav-btn" onclick="showPage('tabellen', this)">Tabellen</button>
+    <button class="nav-btn" onclick="showPage('spielplan', this)">Spielplan</button>
+    <button class="nav-btn" onclick="showPage('ergebnisse', this)">Ergebnisse</button>
+    <button class="nav-btn" onclick="showPage('news', this)">News</button>
+    <button class="nav-btn" onclick="showPage('regeln', this)">Regeln</button>
+  </nav>
+
+  <main>
+    <section id="start" class="page active">
+      <div class="hero">
+        <div>
+          <span class="hero-badge">Neue Online-Dartliga</span>
+          <h2>Willkommen in der <span class="blue-text">JPL Darts Liga</span></h2>
+          <p>
+            Die JPL Darts Liga ist eine neu gegründete Online-Dartliga. Gespielt wird einzeln.
+            Spieler können je nach Plattform in der Scolia-Liga oder AutoDarts-Liga antreten.
+            Termine werden von den Spielern selbst abgesprochen, die Liga gibt dafür einen Zeitraum vor.
+          </p>
+          <div class="discord-box">
+            <strong>Discord als Zentrale</strong>
+            <p>Anmeldung, Terminabsprache, Ergebnisabgabe und News laufen über den Discord-Server.</p>
+            <a class="btn" href="#" onclick="alert('Hier später deinen Discord-Link einfügen.'); return false;">Discord beitreten</a>
+          </div>
+        </div>
+        <img class="hero-logo" src="logo.png" alt="JPL Logo" />
+      </div>
+
+      <div class="quick-grid">
+        <div class="quick-card">
+          <strong>2 Punkte pro Sieg</strong>
+          <p>Ein Sieg bringt 2 Punkte für die Tabelle.</p>
+        </div>
+        <div class="quick-card">
+          <strong>First to 6 Legs</strong>
+          <p>Wer zuerst 6 Legs gewinnt, gewinnt das Spiel.</p>
+        </div>
+        <div class="quick-card">
+          <strong>2 Plattformen</strong>
+          <p>Eigene Tabellen für Scolia und AutoDarts.</p>
+        </div>
+        <div class="quick-card">
+          <strong>Eigene Termine</strong>
+          <p>Spieler sprechen ihre Matches selbst im Zeitraum ab.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="tabellen" class="page">
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Scolia Tabelle</h2>
+            <p class="small-info">Wird automatisch aus deinen Google-Sheets-Ergebnissen berechnet.</p>
+          </div>
+          <span class="tag">Scolia</span>
+        </div>
+        <p id="scoliaStatus" class="status-line">Lade Tabelle...</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Platz</th>
+              <th>Spieler</th>
+              <th>Spiele</th>
+              <th>Siege</th>
+              <th>Niederlagen</th>
+              <th>Legs +</th>
+              <th>Legs -</th>
+              <th>Leg-Diff.</th>
+              <th>Punkte</th>
+            </tr>
+          </thead>
+          <tbody id="scoliaTableBody"></tbody>
+        </table>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>AutoDarts Tabelle</h2>
+            <p class="small-info">Wird automatisch aus deinen Google-Sheets-Ergebnissen berechnet.</p>
+          </div>
+          <span class="tag">AutoDarts</span>
+        </div>
+        <p id="autodartsStatus" class="status-line">Lade Tabelle...</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Platz</th>
+              <th>Spieler</th>
+              <th>Spiele</th>
+              <th>Siege</th>
+              <th>Niederlagen</th>
+              <th>Legs +</th>
+              <th>Legs -</th>
+              <th>Leg-Diff.</th>
+              <th>Punkte</th>
+            </tr>
+          </thead>
+          <tbody id="autodartsTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="spielplan" class="page">
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Spielplan</h2>
+            <p class="small-info">Der Spielplan kann später auch aus einem zweiten Google Sheet geladen werden.</p>
+          </div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Spieltag</th>
+              <th>Zeitraum</th>
+              <th>Plattform</th>
+              <th>Spieler A</th>
+              <th>Spieler B</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>Wird noch festgelegt</td>
+              <td>Scolia</td>
+              <td>Spieler 1</td>
+              <td>Spieler 2</td>
+              <td><span class="tag open">Offen</span></td>
+            </tr>
+            <tr>
+              <td>1</td>
+              <td>Wird noch festgelegt</td>
+              <td>AutoDarts</td>
+              <td>Spieler 1</td>
+              <td>Spieler 2</td>
+              <td><span class="tag open">Offen</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="ergebnisse" class="page">
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Ergebnisse</h2>
+            <p class="small-info">Diese Liste kommt automatisch aus Google Sheets.</p>
+          </div>
+        </div>
+        <p id="resultsStatus" class="status-line">Lade Ergebnisse...</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Datum</th>
+              <th>Plattform</th>
+              <th>Spieler A</th>
+              <th>Ergebnis</th>
+              <th>Spieler B</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="resultsTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="news" class="page">
+      <h2 class="page-title">News</h2>
+      <div class="two-grid">
+        <article class="news-card">
+          <div class="date">News</div>
+          <h3>JPL Darts Liga gegründet</h3>
+          <p>Die JPL Darts Liga startet als neue Online-Dartliga für Spieler auf Scolia und AutoDarts.</p>
+        </article>
+        <article class="news-card">
+          <div class="date">Info</div>
+          <h3>Anmeldung über Discord</h3>
+          <p>Spieler melden sich über den Discord-Server an und klären ihre Termine selbst im vorgegebenen Zeitraum.</p>
+        </article>
+        <article class="news-card">
+          <div class="date">System</div>
+          <h3>Automatische Tabellen aktiv</h3>
+          <p>Ergebnisse aus Google Sheets werden automatisch für Scolia und AutoDarts berechnet.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="regeln" class="page">
+      <h2 class="page-title">Regeln</h2>
+      <div class="two-grid">
+        <div class="rule-card">
+          <h3>Spielmodus</h3>
+          <p>Gespielt wird First to 6 Legs. Wer zuerst 6 Legs erreicht, gewinnt das Match.</p>
+        </div>
+        <div class="rule-card">
+          <h3>Punkte</h3>
+          <p>Ein Sieg bringt 2 Punkte. Niederlagen bringen 0 Punkte.</p>
+        </div>
+        <div class="rule-card">
+          <h3>Terminabsprache</h3>
+          <p>Die Liga gibt einen Zeitraum vor. Die Spieler sprechen ihren genauen Termin selbst untereinander ab.</p>
+        </div>
+        <div class="rule-card">
+          <h3>Ergebnis melden</h3>
+          <p>Nach dem Spiel wird das Ergebnis auf dem Discord-Server gemeldet. Danach wird es in Google Sheets eingetragen.</p>
+        </div>
+        <div class="rule-card">
+          <h3>Plattformen</h3>
+          <p>Es gibt getrennte Tabellen für Scolia und AutoDarts.</p>
+        </div>
+        <div class="rule-card">
+          <h3>Average</h3>
+          <p>Average wird aktuell noch nicht in der Tabelle geführt. Das kann später ergänzt werden.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>© JPL Darts Liga · Website für GitHub Pages vorbereitet</p>
+  </footer>
+
+  <script>
+    const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR9cqFKQxjTBcRuUVivV8uEK4IQwpFZXbi82FjcaKiY8RXPRnbqmfhg0MdW31qJqtv7P2Fn9loUxYFM/pub?output=csv";
+
+    function showPage(pageId, button) {
+      const pages = document.querySelectorAll('.page');
+      const buttons = document.querySelectorAll('.nav-btn');
+
+      pages.forEach(page => page.classList.remove('active'));
+      buttons.forEach(btn => btn.classList.remove('active'));
+
+      document.getElementById(pageId).classList.add('active');
+      button.classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function parseCSV(text) {
+      const rows = [];
+      let current = '';
+      let row = [];
+      let insideQuotes = false;
+
+      for (let i = 0; i < text.length; i++) {
+        const char = text[i];
+        const nextChar = text[i + 1];
+
+        if (char === '"' && insideQuotes && nextChar === '"') {
+          current += '"';
+          i++;
+        } else if (char === '"') {
+          insideQuotes = !insideQuotes;
+        } else if (char === ',' && !insideQuotes) {
+          row.push(current.trim());
+          current = '';
+        } else if ((char === '\n' || char === '\r') && !insideQuotes) {
+          if (current || row.length) {
+            row.push(current.trim());
+            rows.push(row);
+            row = [];
+            current = '';
+          }
+          if (char === '\r' && nextChar === '\n') i++;
+        } else {
+          current += char;
+        }
+      }
+
+      if (current || row.length) {
+        row.push(current.trim());
+        rows.push(row);
+      }
+
+      return rows;
+    }
+
+    function normalizePlatform(platform) {
+      const value = String(platform || '').toLowerCase().replace(/\s/g, '');
+      if (value.includes('scolia')) return 'Scolia';
+      if (value.includes('autodarts') || value.includes('auto')) return 'AutoDarts';
+      return platform || 'Unbekannt';
+    }
+
+    function toNumber(value) {
+      const number = Number(String(value || '').replace(',', '.'));
+      return Number.isFinite(number) ? number : 0;
+    }
+
+    function buildResults(rows) {
+      const header = rows[0].map(item => item.toLowerCase());
+      const index = {
+        datum: header.indexOf('datum'),
+        plattform: header.indexOf('plattform'),
+        spielerA: header.indexOf('spieler a'),
+        spielerB: header.indexOf('spieler b'),
+        legsA: header.indexOf('legs a'),
+        legsB: header.indexOf('legs b')
+      };
+
+      return rows.slice(1)
+        .map(row => ({
+          datum: row[index.datum] || '',
+          plattform: normalizePlatform(row[index.plattform] || ''),
+          spielerA: row[index.spielerA] || '',
+          spielerB: row[index.spielerB] || '',
+          legsA: toNumber(row[index.legsA]),
+          legsB: toNumber(row[index.legsB])
+        }))
+        .filter(game => game.spielerA && game.spielerB && game.plattform && (game.legsA > 0 || game.legsB > 0));
+    }
+
+    function calculateTable(games, platformName) {
+      const players = {};
+      const platformGames = games.filter(game => game.plattform === platformName);
+
+      platformGames.forEach(game => {
+        if (!players[game.spielerA]) players[game.spielerA] = createPlayer(game.spielerA);
+        if (!players[game.spielerB]) players[game.spielerB] = createPlayer(game.spielerB);
+
+        const playerA = players[game.spielerA];
+        const playerB = players[game.spielerB];
+
+        playerA.spiele++;
+        playerB.spiele++;
+
+        playerA.legsPlus += game.legsA;
+        playerA.legsMinus += game.legsB;
+        playerB.legsPlus += game.legsB;
+        playerB.legsMinus += game.legsA;
+
+        if (game.legsA > game.legsB) {
+          playerA.siege++;
+          playerB.niederlagen++;
+          playerA.punkte += 2;
+        } else if (game.legsB > game.legsA) {
+          playerB.siege++;
+          playerA.niederlagen++;
+          playerB.punkte += 2;
+        }
+      });
+
+      return Object.values(players).sort((a, b) => {
+        if (b.punkte !== a.punkte) return b.punkte - a.punkte;
+        if (b.siege !== a.siege) return b.siege - a.siege;
+        if ((b.legsPlus - b.legsMinus) !== (a.legsPlus - a.legsMinus)) {
+          return (b.legsPlus - b.legsMinus) - (a.legsPlus - a.legsMinus);
+        }
+        return b.legsPlus - a.legsPlus;
+      });
+    }
+
+    function createPlayer(name) {
+      return {
+        name,
+        spiele: 0,
+        siege: 0,
+        niederlagen: 0,
+        legsPlus: 0,
+        legsMinus: 0,
+        punkte: 0
+      };
+    }
+
+    function renderLeagueTable(tableData, tbodyId, statusId) {
+      const tbody = document.getElementById(tbodyId);
+      const status = document.getElementById(statusId);
+      tbody.innerHTML = '';
+
+      if (!tableData.length) {
+        status.textContent = 'Noch keine Ergebnisse für diese Plattform vorhanden.';
+        return;
+      }
+
+      status.textContent = `${tableData.length} Spieler in der Tabelle.`;
+
+      tableData.forEach((player, index) => {
+        const rank = index + 1;
+        const diff = player.legsPlus - player.legsMinus;
+        const tr = document.createElement('tr');
+
+        if (rank === 3) tr.classList.add('cut-top');
+        if (tableData.length >= 4 && rank === tableData.length - 1) tr.classList.add('cut-bottom');
+
+        tr.innerHTML = `
+          <td class="rank">${rank}</td>
+          <td>${player.name}</td>
+          <td>${player.spiele}</td>
+          <td>${player.siege}</td>
+          <td>${player.niederlagen}</td>
+          <td>${player.legsPlus}</td>
+          <td>${player.legsMinus}</td>
+          <td>${diff > 0 ? '+' + diff : diff}</td>
+          <td>${player.punkte}</td>
+        `;
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderResults(games) {
+      const tbody = document.getElementById('resultsTableBody');
+      const status = document.getElementById('resultsStatus');
+      tbody.innerHTML = '';
+
+      if (!games.length) {
+        status.textContent = 'Noch keine Ergebnisse vorhanden.';
+        return;
+      }
+
+      status.textContent = `${games.length} Ergebnisse geladen.`;
+
+      games.slice().reverse().forEach(game => {
+        const aWon = game.legsA > game.legsB;
+        const bWon = game.legsB > game.legsA;
+        const tr = document.createElement('tr');
+
+        tr.innerHTML = `
+          <td>${game.datum}</td>
+          <td>${game.plattform}</td>
+          <td class="${aWon ? 'winner' : ''}">${game.spielerA}</td>
+          <td>${game.legsA} : ${game.legsB}</td>
+          <td class="${bWon ? 'winner' : ''}">${game.spielerB}</td>
+          <td><span class="tag done">Beendet</span></td>
+        `;
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    async function loadData() {
+      try {
+        const response = await fetch(CSV_URL);
+        if (!response.ok) throw new Error('CSV konnte nicht geladen werden.');
+
+        const text = await response.text();
+        const rows = parseCSV(text).filter(row => row.some(cell => cell.trim() !== ''));
+        const games = buildResults(rows);
+
+        renderResults(games);
+        renderLeagueTable(calculateTable(games, 'Scolia'), 'scoliaTableBody', 'scoliaStatus');
+        renderLeagueTable(calculateTable(games, 'AutoDarts'), 'autodartsTableBody', 'autodartsStatus');
+      } catch (error) {
+        document.getElementById('resultsStatus').textContent = 'Fehler beim Laden der Ergebnisse. Prüfe den Google-Sheets-Link.';
+        document.getElementById('scoliaStatus').textContent = 'Tabelle konnte nicht geladen werden.';
+        document.getElementById('autodartsStatus').textContent = 'Tabelle konnte nicht geladen werden.';
+        console.error(error);
+      }
+    }
+
+    loadData();
+  </script>
+</body>
+</html>
