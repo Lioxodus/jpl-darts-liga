@@ -501,26 +501,9 @@
 								<th>Status</th>
 							</tr>
 						</thead>
-						<tbody>
+						<tbody id="scheduleTableBody">
 							<tr>
-								<td>1</td>
-								<td>Wird noch festgelegt</td>
-								<td>Scolia</td>
-								<td>Spieler 1</td>
-								<td>Spieler 2</td>
-								<td>
-									<span class="tag open">Offen</span>
-								</td>
-							</tr>
-							<tr>
-								<td>1</td>
-								<td>Wird noch festgelegt</td>
-								<td>AutoDarts</td>
-								<td>Spieler 1</td>
-								<td>Spieler 2</td>
-								<td>
-									<span class="tag open">Offen</span>
-								</td>
+								<td colspan="6">Spielplan wird geladen...</td>
 							</tr>
 						</tbody>
 					</table>
@@ -618,6 +601,7 @@
 
 		<script>
 			const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR9cqFKQxjTBcRuUVivV8uEK4IQwpFZXbi82FjcaKiY8RXPRnbqmfhg0MdW31qJqtv7P2Fn9loUxYFM/pub?output=csv";
+			const SCHEDULE_CSV_URL = "HIER_SPIELPLAN_CSV_LINK_EINFUEGEN";
 
 			function showPage(pageId, button) {
 			const pages = document.querySelectorAll('.page');
@@ -680,6 +664,29 @@
 			function toNumber(value) {
 			const number = Number(String(value || '').replace(',', '.'));
 			return Number.isFinite(number) ? number : 0;
+			}
+
+			function buildSchedule(rows) {
+			const header = rows[0].map(item => item.toLowerCase());
+			const index = {
+			spieltag: header.indexOf('spieltag'),
+			zeitraum: header.indexOf('zeitraum'),
+			plattform: header.indexOf('plattform'),
+			spielerA: header.indexOf('spieler a'),
+			spielerB: header.indexOf('spieler b'),
+			status: header.indexOf('status')
+			};
+
+			return rows.slice(1)
+			.map(row => ({
+			spieltag: row[index.spieltag] || '',
+			zeitraum: row[index.zeitraum] || '',
+			plattform: normalizePlatform(row[index.plattform] || ''),
+			spielerA: row[index.spielerA] || '',
+			spielerB: row[index.spielerB] || '',
+			status: row[index.status] || 'Offen'
+			}))
+			.filter(game => game.spieltag && game.spielerA && game.spielerB);
 			}
 
 			function buildResults(rows) {
@@ -793,6 +800,37 @@
 			});
 			}
 
+			function renderSchedule(scheduleGames) {
+			const tbody = document.getElementById('scheduleTableBody');
+			tbody.innerHTML = '';
+
+			if (!scheduleGames.length) {
+			tbody.innerHTML = '<tr>
+				<td colspan="6">Noch kein Spielplan vorhanden.</td>
+			</tr>';
+			return;
+			}
+
+			scheduleGames.forEach(game => {
+			const statusLower = String(game.status || '').toLowerCase();
+			const statusClass = statusLower.includes('gespielt') || statusLower.includes('beendet') ? 'done' : 'open';
+			const tr = document.createElement('tr');
+
+			tr.innerHTML = `
+			<td>${game.spieltag}</td>
+			<td>${game.zeitraum}</td>
+			<td>${game.plattform}</td>
+			<td>${game.spielerA}</td>
+			<td>${game.spielerB}</td>
+			<td>
+				<span class="tag ${statusClass}">${game.status}</span>
+			</td>
+			`;
+
+			tbody.appendChild(tr);
+			});
+			}
+
 			function renderResults(games) {
 			const tbody = document.getElementById('resultsTableBody');
 			const status = document.getElementById('resultsStatus');
@@ -825,6 +863,28 @@
 			});
 			}
 
+			async function loadSchedule() {
+			if (!SCHEDULE_CSV_URL || SCHEDULE_CSV_URL === 'HIER_SPIELPLAN_CSV_LINK_EINFUEGEN') {
+			renderSchedule([]);
+			return;
+			}
+
+			try {
+			const response = await fetch(SCHEDULE_CSV_URL);
+			if (!response.ok) throw new Error('Spielplan-CSV konnte nicht geladen werden.');
+
+			const text = await response.text();
+			const rows = parseCSV(text).filter(row => row.some(cell => cell.trim() !== ''));
+			const scheduleGames = buildSchedule(rows);
+			renderSchedule(scheduleGames);
+			} catch (error) {
+			document.getElementById('scheduleTableBody').innerHTML = '<tr>
+				<td colspan="6">Spielplan konnte nicht geladen werden. Prüfe den Google-Sheets-Link.</td>
+			</tr>';
+			console.error(error);
+			}
+			}
+
 			async function loadData() {
 			try {
 			const response = await fetch(CSV_URL);
@@ -846,6 +906,7 @@
 			}
 
 			loadData();
+			loadSchedule();
 		</script>
 	</body>
 </html>
