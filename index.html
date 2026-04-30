@@ -84,7 +84,8 @@
 			backdrop-filter: blur(10px);
 			}
 
-			nav button {
+			nav button,
+			nav a {
 			cursor: pointer;
 			border: 1px solid rgba(0, 140, 255, 0.35);
 			background: rgba(255, 255, 255, 0.04);
@@ -96,7 +97,9 @@
 			}
 
 			nav button:hover,
-			nav button.active {
+			nav button.active,
+			nav a:hover,
+			nav a.active {
 			background: linear-gradient(135deg, var(--blue), #004d9a);
 			box-shadow: 0 0 16px rgba(0, 140, 255, 0.4);
 			transform: translateY(-1px);
@@ -108,12 +111,10 @@
 			}
 
 			.page {
-			display: none;
-			animation: fadeIn 0.25s ease-in-out;
-			}
-
-			.page.active {
 			display: block;
+			animation: fadeIn 0.25s ease-in-out;
+			scroll-margin-top: 90px;
+			margin-bottom: 26px;
 			}
 
 			@keyframes fadeIn {
@@ -376,16 +377,16 @@
 		</header>
 
 		<nav>
-			<button type="button" class="nav-btn active" data-page="start">Start</button>
-			<button type="button" class="nav-btn" data-page="tabellen">Tabellen</button>
-			<button type="button" class="nav-btn" data-page="spielplan">Spielplan</button>
-			<button type="button" class="nav-btn" data-page="ergebnisse">Ergebnisse</button>
-			<button type="button" class="nav-btn" data-page="news">News</button>
-			<button type="button" class="nav-btn" data-page="regeln">Regeln</button>
+			<a class="active" href="#start">Start</a>
+			<a href="#tabellen">Tabellen</a>
+			<a href="#spielplan">Spielplan</a>
+			<a href="#ergebnisse">Ergebnisse</a>
+			<a href="#news">News</a>
+			<a href="#regeln">Regeln</a>
 		</nav>
 
 		<main>
-			<section id="start" class="page active">
+			<section id="start" class="page">
 				<div class="hero">
 					<div>
 						<span class="hero-badge">Neue Online-Dartliga</span>
@@ -603,24 +604,11 @@
 			const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR9cqFKQxjTBcRuUVivV8uEK4IQwpFZXbi82FjcaKiY8RXPRnbqmfhg0MdW31qJqtv7P2Fn9loUxYFM/pub?output=csv";
 			const SCHEDULE_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSVFdkLUs8qGyDd7lsLiRk6yyKr4RsVPk5UpoVXEx8jJvFNsS4e8J51PC6rKeFF91SeYtpzV0cRg3vx/pub?output=csv";
 
-			function showPage(pageId, button) {
-			const pages = document.querySelectorAll('.page');
-			const buttons = document.querySelectorAll('.nav-btn');
-			const targetPage = document.getElementById(pageId);
-
-			if (!targetPage) return;
-
-			pages.forEach(page => page.classList.remove('active'));
-			buttons.forEach(btn => btn.classList.remove('active'));
-
-			targetPage.classList.add('active');
-			if (button) button.classList.add('active');
-			window.scrollTo({ top: 0, behavior: 'smooth' });
-			}
-
-			document.querySelectorAll('.nav-btn').forEach(button => {
-			button.addEventListener('click', () => {
-			showPage(button.dataset.page, button);
+			document.querySelectorAll('nav a').forEach(link => {
+			link.addEventListener('click', () => {
+			document.querySelectorAll('nav a').forEach(item => item.classList.remove('active'));
+			link.classList.add('active');
+			});
 			});
 			});
 
