@@ -84,7 +84,8 @@
 			backdrop-filter: blur(10px);
 			}
 
-			nav button {
+			nav button,
+			nav a {
 			cursor: pointer;
 			border: 1px solid rgba(0, 140, 255, 0.35);
 			background: rgba(255, 255, 255, 0.04);
@@ -93,10 +94,14 @@
 			border-radius: 999px;
 			font-weight: 700;
 			transition: 0.2s;
+			text-decoration: none;
+			display: inline-block;
 			}
 
 			nav button:hover,
-			nav button.active {
+			nav button.active,
+			nav a:hover,
+			nav a.active {
 			background: linear-gradient(135deg, var(--blue), #004d9a);
 			box-shadow: 0 0 16px rgba(0, 140, 255, 0.4);
 			transform: translateY(-1px);
@@ -110,6 +115,8 @@
 			.page {
 			display: none;
 			animation: fadeIn 0.25s ease-in-out;
+			scroll-margin-top: 110px;
+			margin-bottom: 32px;
 			}
 
 			.page.active {
@@ -376,12 +383,12 @@
 		</header>
 
 		<nav>
-			<button class="nav-btn active" onclick="showPage('start', this)">Start</button>
-			<button class="nav-btn" onclick="showPage('tabellen', this)">Tabellen</button>
-			<button class="nav-btn" onclick="showPage('spielplan', this)">Spielplan</button>
-			<button class="nav-btn" onclick="showPage('ergebnisse', this)">Ergebnisse</button>
-			<button class="nav-btn" onclick="showPage('news', this)">News</button>
-			<button class="nav-btn" onclick="showPage('regeln', this)">Regeln</button>
+			<a class="nav-link active" href="#start" data-page="start">Start</a>
+			<a class="nav-link" href="#tabellen" data-page="tabellen">Tabellen</a>
+			<a class="nav-link" href="#spielplan" data-page="spielplan">Spielplan</a>
+			<a class="nav-link" href="#ergebnisse" data-page="ergebnisse">Ergebnisse</a>
+			<a class="nav-link" href="#news" data-page="news">News</a>
+			<a class="nav-link" href="#regeln" data-page="regeln">Regeln</a>
 		</nav>
 
 		<main>
@@ -501,26 +508,9 @@
 								<th>Status</th>
 							</tr>
 						</thead>
-						<tbody>
+						<tbody id="scheduleTableBody">
 							<tr>
-								<td>1</td>
-								<td>Wird noch festgelegt</td>
-								<td>Scolia</td>
-								<td>Spieler 1</td>
-								<td>Spieler 2</td>
-								<td>
-									<span class="tag open">Offen</span>
-								</td>
-							</tr>
-							<tr>
-								<td>1</td>
-								<td>Wird noch festgelegt</td>
-								<td>AutoDarts</td>
-								<td>Spieler 1</td>
-								<td>Spieler 2</td>
-								<td>
-									<span class="tag open">Offen</span>
-								</td>
+								<td colspan="6">Spielplan wird geladen...</td>
 							</tr>
 						</tbody>
 					</table>
@@ -617,19 +607,36 @@
 		</footer>
 
 		<script>
-			const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR9cqFKQxjTBcRuUVivV8uEK4IQwpFZXbi82FjcaKiY8RXPRnbqmfhg0MdW31qJqtv7P2Fn9loUxYFM/pub?output=csv";
-
-			function showPage(pageId, button) {
+			function showPage(pageId) {
 			const pages = document.querySelectorAll('.page');
-			const buttons = document.querySelectorAll('.nav-btn');
+			const links = document.querySelectorAll('.nav-link');
+			const targetPage = document.getElementById(pageId);
+
+			if (!targetPage) return;
 
 			pages.forEach(page => page.classList.remove('active'));
-			buttons.forEach(btn => btn.classList.remove('active'));
+			links.forEach(link => link.classList.remove('active'));
 
-			document.getElementById(pageId).classList.add('active');
-			button.classList.add('active');
+			targetPage.classList.add('active');
+			const activeLink = document.querySelector(`.nav-link[data-page="${pageId}"]`);
+			if (activeLink) activeLink.classList.add('active');
+
 			window.scrollTo({ top: 0, behavior: 'smooth' });
 			}
+
+			document.querySelectorAll('.nav-link').forEach(link => {
+			link.addEventListener('click', event => {
+			event.preventDefault();
+			showPage(link.dataset.page);
+			});
+			});
+
+			const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR9cqFKQxjTBcRuUVivV8uEK4IQwpFZXbi82FjcaKiY8RXPRnbqmfhg0MdW31qJqtv7P2Fn9loUxYFM/pub?output=csv";
+			const SCHEDULE_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSVFdkLUs8qGyDd7lsLiRk6yyKr4RsVPk5UpoVXEx8jJvFNsS4e8J51PC6rKeFF91SeYtpzV0cRg3vx/pub?output=csv";
+
+
+			});
+			});
 
 			function parseCSV(text) {
 			const rows = [];
@@ -680,6 +687,29 @@
 			function toNumber(value) {
 			const number = Number(String(value || '').replace(',', '.'));
 			return Number.isFinite(number) ? number : 0;
+			}
+
+			function buildSchedule(rows) {
+			const header = rows[0].map(item => item.toLowerCase());
+			const index = {
+			spieltag: header.indexOf('spieltag'),
+			zeitraum: header.indexOf('zeitraum'),
+			plattform: header.indexOf('plattform'),
+			spielerA: header.indexOf('spieler a'),
+			spielerB: header.indexOf('spieler b'),
+			status: header.indexOf('status')
+			};
+
+			return rows.slice(1)
+			.map(row => ({
+			spieltag: row[index.spieltag] || '',
+			zeitraum: row[index.zeitraum] || '',
+			plattform: normalizePlatform(row[index.plattform] || ''),
+			spielerA: row[index.spielerA] || '',
+			spielerB: row[index.spielerB] || '',
+			status: row[index.status] || 'Offen'
+			}))
+			.filter(game => game.spieltag && game.spielerA && game.spielerB);
 			}
 
 			function buildResults(rows) {
@@ -793,6 +823,37 @@
 			});
 			}
 
+			function renderSchedule(scheduleGames) {
+			const tbody = document.getElementById('scheduleTableBody');
+			tbody.innerHTML = '';
+
+			if (!scheduleGames.length) {
+			tbody.innerHTML = '<tr>
+				<td colspan="6">Noch kein Spielplan vorhanden.</td>
+			</tr>';
+			return;
+			}
+
+			scheduleGames.forEach(game => {
+			const statusLower = String(game.status || '').toLowerCase();
+			const statusClass = statusLower.includes('gespielt') || statusLower.includes('beendet') ? 'done' : 'open';
+			const tr = document.createElement('tr');
+
+			tr.innerHTML = `
+			<td>${game.spieltag}</td>
+			<td>${game.zeitraum}</td>
+			<td>${game.plattform}</td>
+			<td>${game.spielerA}</td>
+			<td>${game.spielerB}</td>
+			<td>
+				<span class="tag ${statusClass}">${game.status}</span>
+			</td>
+			`;
+
+			tbody.appendChild(tr);
+			});
+			}
+
 			function renderResults(games) {
 			const tbody = document.getElementById('resultsTableBody');
 			const status = document.getElementById('resultsStatus');
@@ -825,6 +886,28 @@
 			});
 			}
 
+			async function loadSchedule() {
+			if (!SCHEDULE_CSV_URL || SCHEDULE_CSV_URL === 'HIER_SPIELPLAN_CSV_LINK_EINFUEGEN') {
+			renderSchedule([]);
+			return;
+			}
+
+			try {
+			const response = await fetch(SCHEDULE_CSV_URL);
+			if (!response.ok) throw new Error('Spielplan-CSV konnte nicht geladen werden.');
+
+			const text = await response.text();
+			const rows = parseCSV(text).filter(row => row.some(cell => cell.trim() !== ''));
+			const scheduleGames = buildSchedule(rows);
+			renderSchedule(scheduleGames);
+			} catch (error) {
+			document.getElementById('scheduleTableBody').innerHTML = '<tr>
+				<td colspan="6">Spielplan konnte nicht geladen werden. Prüfe den Google-Sheets-Link.</td>
+			</tr>';
+			console.error(error);
+			}
+			}
+
 			async function loadData() {
 			try {
 			const response = await fetch(CSV_URL);
@@ -846,6 +929,7 @@
 			}
 
 			loadData();
+			loadSchedule();
 		</script>
 	</body>
 </html>
