@@ -111,10 +111,12 @@
 			}
 
 			.page {
-			display: block;
+			display: block !important;
+			visibility: visible !important;
+			opacity: 1 !important;
 			animation: fadeIn 0.25s ease-in-out;
-			scroll-margin-top: 90px;
-			margin-bottom: 26px;
+			scroll-margin-top: 110px;
+			margin-bottom: 32px;
 			}
 
 			@keyframes fadeIn {
@@ -377,12 +379,12 @@
 		</header>
 
 		<nav>
-			<a class="active" href="#start">Start</a>
-			<a href="#tabellen">Tabellen</a>
-			<a href="#spielplan">Spielplan</a>
-			<a href="#ergebnisse">Ergebnisse</a>
-			<a href="#news">News</a>
-			<a href="#regeln">Regeln</a>
+			<a href="#start" onclick="document.getElementById('start').scrollIntoView({behavior:'smooth'}); return false;">Start</a>
+			<a href="#tabellen" onclick="document.getElementById('tabellen').scrollIntoView({behavior:'smooth'}); return false;">Tabellen</a>
+			<a href="#spielplan" onclick="document.getElementById('spielplan').scrollIntoView({behavior:'smooth'}); return false;">Spielplan</a>
+			<a href="#ergebnisse" onclick="document.getElementById('ergebnisse').scrollIntoView({behavior:'smooth'}); return false;">Ergebnisse</a>
+			<a href="#news" onclick="document.getElementById('news').scrollIntoView({behavior:'smooth'}); return false;">News</a>
+			<a href="#regeln" onclick="document.getElementById('regeln').scrollIntoView({behavior:'smooth'}); return false;">Regeln</a>
 		</nav>
 
 		<main>
@@ -604,11 +606,7 @@
 			const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR9cqFKQxjTBcRuUVivV8uEK4IQwpFZXbi82FjcaKiY8RXPRnbqmfhg0MdW31qJqtv7P2Fn9loUxYFM/pub?output=csv";
 			const SCHEDULE_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSVFdkLUs8qGyDd7lsLiRk6yyKr4RsVPk5UpoVXEx8jJvFNsS4e8J51PC6rKeFF91SeYtpzV0cRg3vx/pub?output=csv";
 
-			document.querySelectorAll('nav a').forEach(link => {
-			link.addEventListener('click', () => {
-			document.querySelectorAll('nav a').forEach(item => item.classList.remove('active'));
-			link.classList.add('active');
-			});
+
 			});
 			});
 
