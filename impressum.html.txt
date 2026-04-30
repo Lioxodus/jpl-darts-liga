@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Impressum - JPL Darts Liga</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <h1>Impressum</h1>
+</header>
+
+<nav>
+  <a href="index.html">Start</a>
+  <a href="tabellen.html">Tabellen</a>
+  <a href="spieltage.html">Spieltage</a>
+  <a href="news.html">News</a>
+  <a href="regeln.html">Regeln</a>
+</nav>
+
+<main class="panel">
+  <h2>Angaben gemäß § 5 TMG</h2>
+
+  <p>
+    JPL Darts Liga<br>
+    Franz-Mehring-Str. 15<br>
+    01237 Dresden<br>
+    Deutschland
+  </p>
+
+  <h3>Kontakt</h3>
+  <p>
+    E-Mail: deine@email.de
+  </p>
+
+  <h3>Haftung für Inhalte</h3>
+  <p>
+    Die Inhalte unserer Seiten wurden mit größter Sorgfalt erstellt. Für die Richtigkeit,
+    Vollständigkeit und Aktualität der Inhalte können wir jedoch keine Gewähr übernehmen.
+  </p>
+
+  <h3>Haftung für Links</h3>
+  <p>
+    Unsere Website enthält Links zu externen Websites Dritter. Auf deren Inhalte haben wir keinen Einfluss.
+  </p>
+
+  <h3>Urheberrecht</h3>
+  <p>
+    Die durch den Seitenbetreiber erstellten Inhalte und Werke auf diesen Seiten unterliegen dem deutschen Urheberrecht.
+  </p>
+</main>
+
+</body>
+</html>
