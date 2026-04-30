@@ -94,6 +94,8 @@
 			border-radius: 999px;
 			font-weight: 700;
 			transition: 0.2s;
+			text-decoration: none;
+			display: inline-block;
 			}
 
 			nav button:hover,
@@ -111,12 +113,14 @@
 			}
 
 			.page {
-			display: block !important;
-			visibility: visible !important;
-			opacity: 1 !important;
+			display: none;
 			animation: fadeIn 0.25s ease-in-out;
 			scroll-margin-top: 110px;
 			margin-bottom: 32px;
+			}
+
+			.page.active {
+			display: block;
 			}
 
 			@keyframes fadeIn {
@@ -379,16 +383,16 @@
 		</header>
 
 		<nav>
-			<a href="#start" onclick="document.getElementById('start').scrollIntoView({behavior:'smooth'}); return false;">Start</a>
-			<a href="#tabellen" onclick="document.getElementById('tabellen').scrollIntoView({behavior:'smooth'}); return false;">Tabellen</a>
-			<a href="#spielplan" onclick="document.getElementById('spielplan').scrollIntoView({behavior:'smooth'}); return false;">Spielplan</a>
-			<a href="#ergebnisse" onclick="document.getElementById('ergebnisse').scrollIntoView({behavior:'smooth'}); return false;">Ergebnisse</a>
-			<a href="#news" onclick="document.getElementById('news').scrollIntoView({behavior:'smooth'}); return false;">News</a>
-			<a href="#regeln" onclick="document.getElementById('regeln').scrollIntoView({behavior:'smooth'}); return false;">Regeln</a>
+			<a class="nav-link active" href="#start" data-page="start">Start</a>
+			<a class="nav-link" href="#tabellen" data-page="tabellen">Tabellen</a>
+			<a class="nav-link" href="#spielplan" data-page="spielplan">Spielplan</a>
+			<a class="nav-link" href="#ergebnisse" data-page="ergebnisse">Ergebnisse</a>
+			<a class="nav-link" href="#news" data-page="news">News</a>
+			<a class="nav-link" href="#regeln" data-page="regeln">Regeln</a>
 		</nav>
 
 		<main>
-			<section id="start" class="page">
+			<section id="start" class="page active">
 				<div class="hero">
 					<div>
 						<span class="hero-badge">Neue Online-Dartliga</span>
@@ -603,6 +607,30 @@
 		</footer>
 
 		<script>
+			function showPage(pageId) {
+			const pages = document.querySelectorAll('.page');
+			const links = document.querySelectorAll('.nav-link');
+			const targetPage = document.getElementById(pageId);
+
+			if (!targetPage) return;
+
+			pages.forEach(page => page.classList.remove('active'));
+			links.forEach(link => link.classList.remove('active'));
+
+			targetPage.classList.add('active');
+			const activeLink = document.querySelector(`.nav-link[data-page="${pageId}"]`);
+			if (activeLink) activeLink.classList.add('active');
+
+			window.scrollTo({ top: 0, behavior: 'smooth' });
+			}
+
+			document.querySelectorAll('.nav-link').forEach(link => {
+			link.addEventListener('click', event => {
+			event.preventDefault();
+			showPage(link.dataset.page);
+			});
+			});
+
 			const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR9cqFKQxjTBcRuUVivV8uEK4IQwpFZXbi82FjcaKiY8RXPRnbqmfhg0MdW31qJqtv7P2Fn9loUxYFM/pub?output=csv";
 			const SCHEDULE_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSVFdkLUs8qGyDd7lsLiRk6yyKr4RsVPk5UpoVXEx8jJvFNsS4e8J51PC6rKeFF91SeYtpzV0cRg3vx/pub?output=csv";
 
