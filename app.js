@@ -1,4 +1,5 @@
 const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR9cqFKQxjTBcRuUVivV8uEK4IQwpFZXbi82FjcaKiY8RXPRnbqmfhg0MdW31qJqtv7P2Fn9loUxYFM/pub?output=csv";
+let currentSelectedMatchday = "Alle";
 
 function parseCSV(text) {
   const rows = [];
@@ -193,21 +194,66 @@ function renderLeagueTable(tableData, tbodyId, statusId) {
   });
 }
 
+function renderMatchdayButtons(games) {
+  const container = document.getElementById("matchdayButtons");
+  if (!container) return;
+
+  const matchdays = [...new Set(
+    games
+      .map(game => String(game.spieltag || "").trim())
+      .filter(spieltag => spieltag !== "")
+  )].sort((a, b) => Number(a) - Number(b));
+
+  container.innerHTML = "";
+
+  const allButton = document.createElement("button");
+  allButton.type = "button";
+  allButton.className = currentSelectedMatchday === "Alle" ? "matchday-btn active" : "matchday-btn";
+  allButton.textContent = "Alle";
+  allButton.addEventListener("click", () => {
+    currentSelectedMatchday = "Alle";
+    renderMatchdays(games);
+  });
+  container.appendChild(allButton);
+
+  matchdays.forEach(spieltag => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = currentSelectedMatchday === spieltag ? "matchday-btn active" : "matchday-btn";
+    button.textContent = `Spieltag ${spieltag}`;
+    button.addEventListener("click", () => {
+      currentSelectedMatchday = spieltag;
+      renderMatchdays(games);
+    });
+    container.appendChild(button);
+  });
+}
+
 function renderMatchdays(games) {
   const tbody = document.getElementById("matchdaysTableBody");
   const status = document.getElementById("matchdaysStatus");
   if (!tbody || !status) return;
 
+  renderMatchdayButtons(games);
+
+  const filteredGames = currentSelectedMatchday === "Alle"
+    ? games
+    : games.filter(game => String(game.spieltag || "").trim() === currentSelectedMatchday);
+
   tbody.innerHTML = "";
 
-  if (!games.length) {
-    status.textContent = "Noch keine Spieltage vorhanden.";
+  if (!filteredGames.length) {
+    status.textContent = currentSelectedMatchday === "Alle"
+      ? "Noch keine Spieltage vorhanden."
+      : `Keine Spiele für Spieltag ${currentSelectedMatchday} vorhanden.`;
     return;
   }
 
-  status.textContent = `${games.length} Spiele geladen.`;
+  status.textContent = currentSelectedMatchday === "Alle"
+    ? `${filteredGames.length} Spiele geladen.`
+    : `${filteredGames.length} Spiele für Spieltag ${currentSelectedMatchday} geladen.`;
 
-  games.forEach(game => {
+  filteredGames.forEach(game => {
     const played = isPlayed(game);
     const aWon = played && game.legsA > game.legsB;
     const bWon = played && game.legsB > game.legsA;
