@@ -302,3 +302,180 @@ async function loadData() {
 }
 
 document.addEventListener("DOMContentLoaded", loadData);
+
+
+/* JPL Tabellen-Auswahl: Scolia + AutoDarts Liga 1-4 */
+let selectedLeagueJPL = "Scolia";
+let allGamesJPL = [];
+
+const leagueLabelsJPL = {
+  "Scolia": "Scolia",
+  "DartCounter": "DartCounter",
+  "AutoDarts 1": "AutoDarts Liga 1",
+  "AutoDarts 2": "AutoDarts Liga 2",
+  "AutoDarts 3": "AutoDarts Liga 3",
+  "AutoDarts 4": "AutoDarts Liga 4"
+};
+
+function getLeagueJPL(game) {
+  const platform = String(game.plattform || game.platform || "").toLowerCase().replace(/\s/g, "");
+  const ligaRaw = String(game.liga || game.division || game.gruppe || "").toLowerCase().trim();
+
+  if (platform.includes("scolia")) return "Scolia";
+  if (platform.includes("dartcounter") || platform.includes("dartcounter")) return "DartCounter";
+
+  if (platform.includes("autodarts") || platform.includes("auto")) {
+    if (ligaRaw.includes("4")) return "AutoDarts 4";
+    if (ligaRaw.includes("3")) return "AutoDarts 3";
+    if (ligaRaw.includes("2")) return "AutoDarts 2";
+    return "AutoDarts 1";
+  }
+
+  return "Unbekannt";
+}
+
+function buildGamesJPL(rows) {
+  if (!rows.length) return [];
+  const header = rows[0].map(item => String(item).toLowerCase().trim());
+  const idx = {
+    spieltag: header.indexOf("spieltag"),
+    zeitraum: header.indexOf("zeitraum"),
+    datum: header.indexOf("datum"),
+    plattform: header.indexOf("plattform"),
+    liga: header.indexOf("liga"),
+    spielerA: header.indexOf("spieler a"),
+    spielerB: header.indexOf("spieler b"),
+    legsA: header.indexOf("legs a"),
+    legsB: header.indexOf("legs b"),
+    status: header.indexOf("status")
+  };
+
+  return rows.slice(1).map(row => {
+    const game = {
+      spieltag: idx.spieltag >= 0 ? row[idx.spieltag] || "" : "",
+      zeitraum: idx.zeitraum >= 0 ? row[idx.zeitraum] || "" : "",
+      datum: idx.datum >= 0 ? row[idx.datum] || "" : "",
+      plattform: idx.plattform >= 0 ? row[idx.plattform] || "" : "",
+      liga: idx.liga >= 0 ? row[idx.liga] || "" : "",
+      spielerA: idx.spielerA >= 0 ? row[idx.spielerA] || "" : "",
+      spielerB: idx.spielerB >= 0 ? row[idx.spielerB] || "" : "",
+      legsA: idx.legsA >= 0 ? toNumber(row[idx.legsA]) : 0,
+      legsB: idx.legsB >= 0 ? toNumber(row[idx.legsB]) : 0,
+      status: idx.status >= 0 ? row[idx.status] || "" : ""
+    };
+    game.league = getLeagueJPL(game);
+    if (!game.status) game.status = (game.legsA > 0 || game.legsB > 0) ? "Gespielt" : "Offen";
+    return game;
+  }).filter(game => game.spielerA && game.spielerB && game.league !== "Unbekannt");
+}
+
+function isPlayedJPL(game) {
+  const status = String(game.status || "").toLowerCase();
+  return status.includes("gespielt") || status.includes("beendet") || game.legsA > 0 || game.legsB > 0;
+}
+
+function calculateTableJPL(games, leagueName) {
+  const players = {};
+  games.filter(game => game.league === leagueName && isPlayedJPL(game)).forEach(game => {
+    if (!players[game.spielerA]) players[game.spielerA] = createPlayer(game.spielerA);
+    if (!players[game.spielerB]) players[game.spielerB] = createPlayer(game.spielerB);
+
+    const a = players[game.spielerA];
+    const b = players[game.spielerB];
+
+    a.spiele++;
+    b.spiele++;
+    a.legsPlus += game.legsA;
+    a.legsMinus += game.legsB;
+    b.legsPlus += game.legsB;
+    b.legsMinus += game.legsA;
+
+    if (game.legsA > game.legsB) {
+      a.siege++;
+      b.niederlagen++;
+      a.punkte += 2;
+    } else if (game.legsB > game.legsA) {
+      b.siege++;
+      a.niederlagen++;
+      b.punkte += 2;
+    }
+  });
+
+  return Object.values(players).sort((a, b) => {
+    if (b.punkte !== a.punkte) return b.punkte - a.punkte;
+    if (b.siege !== a.siege) return b.siege - a.siege;
+    if ((b.legsPlus - b.legsMinus) !== (a.legsPlus - a.legsMinus)) {
+      return (b.legsPlus - b.legsMinus) - (a.legsPlus - a.legsMinus);
+    }
+    return b.legsPlus - a.legsPlus;
+  });
+}
+
+function renderSelectedLeagueJPL() {
+  const tbody = document.getElementById("leagueTableBody");
+  const status = document.getElementById("leagueStatus");
+  const title = document.getElementById("leagueTitle");
+  if (!tbody || !status || !title) return;
+
+  title.textContent = `${leagueLabelsJPL[selectedLeagueJPL]} Tabelle`;
+  const tableData = calculateTableJPL(allGamesJPL, selectedLeagueJPL);
+  tbody.innerHTML = "";
+
+  if (!tableData.length) {
+    status.textContent = "Noch keine Ergebnisse für diese Liga vorhanden.";
+    return;
+  }
+
+  status.textContent = `${tableData.length} Spieler in dieser Tabelle.`;
+
+  tableData.forEach((player, index) => {
+    const rank = index + 1;
+    const diff = player.legsPlus - player.legsMinus;
+    const tr = document.createElement("tr");
+    if (rank === 3) tr.classList.add("cut-top");
+    if (tableData.length >= 4 && rank === tableData.length - 1) tr.classList.add("cut-bottom");
+
+    tr.innerHTML = `
+      <td class="rank">${rank}</td>
+      <td>${player.name}</td>
+      <td>${player.spiele}</td>
+      <td>${player.siege}</td>
+      <td>${player.niederlagen}</td>
+      <td>${player.legsPlus}</td>
+      <td>${player.legsMinus}</td>
+      <td>${diff > 0 ? "+" + diff : diff}</td>
+      <td>${player.punkte}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function initLeagueSwitchJPL() {
+  document.querySelectorAll(".switch-btn").forEach(button => {
+    button.addEventListener("click", () => {
+      selectedLeagueJPL = button.dataset.league;
+      document.querySelectorAll(".switch-btn").forEach(btn => btn.classList.remove("active"));
+      button.classList.add("active");
+      renderSelectedLeagueJPL();
+    });
+  });
+}
+
+async function loadTablesJPL() {
+  if (!document.getElementById("leagueTableBody")) return;
+  try {
+    const response = await fetch(CSV_URL);
+    if (!response.ok) throw new Error("CSV konnte nicht geladen werden.");
+    const text = await response.text();
+    const rows = parseCSV(text);
+    allGamesJPL = buildGamesJPL(rows);
+    initLeagueSwitchJPL();
+    renderSelectedLeagueJPL();
+  } catch (error) {
+    const status = document.getElementById("leagueStatus");
+    if (status) status.textContent = "Fehler beim Laden. Prüfe Google Sheet und Spaltennamen.";
+    console.error(error);
+  }
+}
+
+document.addEventListener("DOMContentLoaded", loadTablesJPL);

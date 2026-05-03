@@ -375,3 +375,39 @@ footer {
   background: linear-gradient(135deg, var(--blue), #004d9a);
   box-shadow: 0 0 14px rgba(0, 140, 255, 0.35);
 }
+
+
+.league-switch {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 14px 0 20px;
+}
+
+.switch-btn {
+  cursor: pointer;
+  border: 1px solid rgba(0, 140, 255, 0.35);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--white);
+  padding: 9px 14px;
+  border-radius: 999px;
+  font-weight: 700;
+  transition: 0.2s;
+}
+
+.switch-btn:hover,
+.switch-btn.active {
+  background: linear-gradient(135deg, var(--blue), #004d9a);
+  box-shadow: 0 0 16px rgba(0, 140, 255, 0.4);
+  transform: translateY(-1px);
+}
+@media (max-width: 700px) {
+  .league-switch {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .league-switch::-webkit-scrollbar { display: none; }
+  .switch-btn { flex: 0 0 auto; white-space: nowrap; }
+}
