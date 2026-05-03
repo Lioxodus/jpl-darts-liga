@@ -1,77 +1,23 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>JPL Darts Liga</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <title>Dart Ligen</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header>
-	  <link rel="icon" type="image/x-icon" href="favicon.ico">    
-	  <img class="logo" src="logo.png" alt="JPL Darts Liga Logo" />
-    <h1>JPL Darts Liga</h1>
-    <p>Online Darts Liga für Scolia und AutoDarts</p>
-  </header>
 
-  <nav>
-    <a href="index.html" class="active">Start</a>
-    <a href="tabellen.html" class="">Tabellen</a>
-    <a href="spieltage.html" class="">Spieltage</a>
-    <a href="news.html" class="">News</a>
-    <a href="regeln.html" class="">Regeln</a>
-  </nav>
+<h1>🏆 Dart Ligen</h1>
 
-  <main>
-    <section>
-      <div class="hero">
-        <div>
-          <span class="hero-badge">Neue Online-Dartliga</span>
-          <h2>Willkommen in der <span class="blue-text">JPL Darts Liga</span></h2>
-          <p>
-            Die JPL Darts Liga ist eine neu gegründete Online-Dartliga. Gespielt wird einzeln.
-            Spieler können je nach Plattform in der Scolia-Liga oder AutoDarts-Liga antreten.
-            Termine werden von den Spielern selbst abgesprochen, die Liga gibt dafür einen Zeitraum vor.
-          </p>
-          <div class="discord-box">
-            <strong>Discord als Zentrale</strong>
-            <p>Anmeldung, Terminabsprache, Ergebnisabgabe und News laufen über den Discord-Server.</p>
-            <a class="btn" href="https://discord.gg/US46DvdKZ5" target="_blank" rel="noopener noreferrer">Discord beitreten</a>
-          </div>
-        </div>
-        <img class="hero-logo" src="logo.png" alt="JPL Logo" />
-      </div>
+<div class="buttons">
+  <button onclick="showLiga('liga1')">🤖 Liga 1</button>
+  <button onclick="showLiga('liga2')">🤖 Liga 2</button>
+  <button onclick="showLiga('liga3')">🤖 Liga 3</button>
+  <button onclick="showLiga('liga4')">🤖 Liga 4</button>
+</div>
 
-      <div class="quick-grid">
-        <div class="quick-card">
-          <strong>2 Punkte pro Sieg</strong>
-          <p>Ein Sieg bringt 2 Punkte für die Tabelle.</p>
-        </div>
-        <div class="quick-card">
-          <strong>First to 6 Legs</strong>
-          <p>Wer zuerst 6 Legs gewinnt, gewinnt das Spiel.</p>
-        </div>
-        <div class="quick-card">
-          <strong>2 Plattformen</strong>
-          <p>Eigene Tabellen für Scolia und AutoDarts.</p>
-        </div>
-        <div class="quick-card">
-          <strong>Eigene Termine</strong>
-          <p>Spieler sprechen ihre Matches selbst im Zeitraum ab.</p>
-        </div>
-      </div>
-    </section>
+<div id="content"></div>
 
-  </main>
-
-	<footer>
-		<p>
-			© JPL Darts Liga |
-			<a href="impressum.html">Impressum</a> |
-			<a href="datenschutz.html">Datenschutz</a>
-		</p>
-	</footer>
-
-  
+<script src="script.js"></script>
 </body>
 </html>
