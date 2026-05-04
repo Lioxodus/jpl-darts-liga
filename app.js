@@ -52,16 +52,9 @@ function parseCSV(text) {
 }
 
 function toNumber(value) {
-  const number = Number(String(value || "").replace(",", "."));
+  const clean = String(value || "").trim().replace(",", ".");
+  const number = Number(clean);
   return Number.isFinite(number) ? number : 0;
-}
-
-function getColumnIndex(header, names) {
-  for (const name of names) {
-    const index = header.indexOf(name.toLowerCase());
-    if (index !== -1) return index;
-  }
-  return -1;
 }
 
 function normalizeLeague(platform, liga) {
@@ -82,47 +75,31 @@ function normalizeLeague(platform, liga) {
 }
 
 function buildGames(rows) {
-  if (!rows.length) return [];
-
-  const header = rows[0].map(item => String(item).toLowerCase().trim());
-
-  const index = {
-    spieltag: getColumnIndex(header, ["spieltag"]),
-    zeitraum: getColumnIndex(header, ["zeitraum"]),
-    datum: getColumnIndex(header, ["datum"]),
-    plattform: getColumnIndex(header, ["plattform"]),
-    liga: getColumnIndex(header, ["liga", "division", "gruppe"]),
-    spielerA: getColumnIndex(header, ["spieler a", "spielera"]),
-    spielerB: getColumnIndex(header, ["spieler b", "spielerb"]),
-    legsA: getColumnIndex(header, ["legs a", "legsa"]),
-    legsB: getColumnIndex(header, ["legs b", "legsb"]),
-    status: getColumnIndex(header, ["status"])
-  };
+  // FESTE Reihenfolge im Google Sheet:
+  // 0 Spieltag | 1 Zeitraum | 2 Plattform | 3 Liga | 4 Spieler A | 5 Spieler B | 6 Legs A | 7 Legs B | 8 Status
 
   return rows.slice(1)
     .map(row => {
-      const legsA = index.legsA >= 0 ? toNumber(row[index.legsA]) : 0;
-      const legsB = index.legsB >= 0 ? toNumber(row[index.legsB]) : 0;
-      const rawStatus = index.status >= 0 ? row[index.status] || "" : "";
+      const legsA = toNumber(row[6]);
+      const legsB = toNumber(row[7]);
+      const rawStatus = String(row[8] || "").trim();
       const hasResult = legsA > 0 || legsB > 0;
 
-      return {
-        spieltag: index.spieltag >= 0 ? row[index.spieltag] || "" : "",
-        zeitraum: index.zeitraum >= 0 ? row[index.zeitraum] || "" : "",
-        datum: index.datum >= 0 ? row[index.datum] || "" : "",
-        plattform: index.plattform >= 0 ? row[index.plattform] || "" : "",
-        liga: index.liga >= 0 ? row[index.liga] || "" : "",
-        spielerA: index.spielerA >= 0 ? row[index.spielerA] || "" : "",
-        spielerB: index.spielerB >= 0 ? row[index.spielerB] || "" : "",
+      const game = {
+        spieltag: row[0] || "",
+        zeitraum: row[1] || "",
+        plattform: row[2] || "",
+        liga: row[3] || "",
+        spielerA: row[4] || "",
+        spielerB: row[5] || "",
         legsA,
         legsB,
         status: rawStatus || (hasResult ? "Gespielt" : "Offen")
       };
+
+      game.league = normalizeLeague(game.plattform, game.liga);
+      return game;
     })
-    .map(game => ({
-      ...game,
-      league: normalizeLeague(game.plattform, game.liga)
-    }))
     .filter(game => game.spielerA && game.spielerB && game.league !== "Unbekannt");
 }
 
@@ -227,6 +204,7 @@ function renderLeagueTable() {
 
 function initLeagueSwitch() {
   const buttons = document.querySelectorAll(".switch-btn");
+
   buttons.forEach(button => {
     button.addEventListener("click", () => {
       selectedLeague = button.dataset.league;
@@ -264,7 +242,7 @@ function renderMatchdays(games) {
 
     tr.innerHTML = `
       <td>${game.spieltag || "-"}</td>
-      <td>${game.zeitraum || game.datum || "-"}</td>
+      <td>${game.zeitraum || "-"}</td>
       <td>${leagueLabels[game.league] || game.league}</td>
       <td class="${aWon ? "winner" : ""}">${game.spielerA}</td>
       <td>${result}</td>
@@ -292,8 +270,8 @@ async function loadData() {
     const tableStatus = document.getElementById("leagueStatus");
     const matchdaysStatus = document.getElementById("matchdaysStatus");
 
-    if (tableStatus) tableStatus.textContent = "Fehler beim Laden. Prüfe Google Sheet und Spaltennamen.";
-    if (matchdaysStatus) matchdaysStatus.textContent = "Fehler beim Laden. Prüfe Google Sheet und Spaltennamen.";
+    if (tableStatus) tableStatus.textContent = "Fehler beim Laden. Prüfe Google Sheet und Spaltenreihenfolge.";
+    if (matchdaysStatus) matchdaysStatus.textContent = "Fehler beim Laden. Prüfe Google Sheet und Spaltenreihenfolge.";
 
     console.error(error);
   }
