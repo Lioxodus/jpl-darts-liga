@@ -210,6 +210,38 @@ function renderLeagueTable() {
 
     const tr = document.createElement("tr");
 
+    // SCOLIA + DARTCOUNTER
+    if (
+      (selectedLeague === "Scolia" ||
+       selectedLeague === "DartCounter") &&
+      rank === 5
+    ) {
+      tr.classList.add("cut-top");
+    }
+
+    // AUTODARTS 1-3
+    if (
+      (selectedLeague === "AutoDarts 1" ||
+       selectedLeague === "AutoDarts 2" ||
+       selectedLeague === "AutoDarts 3")
+    ) {
+      if (rank === 3) {
+        tr.classList.add("cut-top");
+      }
+
+      if (rank === tableData.length - 1) {
+        tr.classList.add("cut-bottom");
+      }
+    }
+
+    // AUTODARTS 4
+    if (
+      selectedLeague === "AutoDarts 4" &&
+      rank === 3
+    ) {
+      tr.classList.add("cut-top");
+    }
+
     tr.innerHTML = `
       <td class="rank">${rank}</td>
       <td>${player.name}</td>
@@ -241,8 +273,6 @@ function initLeagueSwitch() {
     });
   });
 }
-
-// SPIELTAG FILTER
 
 function renderMatchdayButtons(games) {
   const container = document.getElementById("matchdayButtons");
