@@ -1,3 +1,5 @@
+// JPL Darts Liga - app.js
+
 const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR9cqFKQxjTBcRuUVivV8uEK4IQwpFZXbi82FjcaKiY8RXPRnbqmfhg0MdW31qJqtv7P2Fn9loUxYFM/pub?output=csv";
 
 let allGames = [];
@@ -37,6 +39,7 @@ function parseCSV(text) {
         row = [];
         current = "";
       }
+
       if (char === "\r" && nextChar === "\n") i++;
     } else {
       current += char;
@@ -52,8 +55,12 @@ function parseCSV(text) {
 }
 
 function toNumber(value) {
-  const clean = String(value || "").trim().replace(",", ".");
-  const number = Number(clean);
+  const cleaned = String(value || "")
+    .replace("\ufeff", "")
+    .replace(",", ".")
+    .replace(/[^\d.-]/g, "");
+
+  const number = Number(cleaned);
   return Number.isFinite(number) ? number : 0;
 }
 
@@ -75,14 +82,13 @@ function normalizeLeague(platform, liga) {
 }
 
 function buildGames(rows) {
-  // FESTE Reihenfolge im Google Sheet:
-  // 0 Spieltag | 1 Zeitraum | 2 Plattform | 3 Liga | 4 Spieler A | 5 Spieler B | 6 Legs A | 7 Legs B | 8 Status
+  if (!rows.length) return [];
 
   return rows.slice(1)
     .map(row => {
       const legsA = toNumber(row[6]);
       const legsB = toNumber(row[7]);
-      const rawStatus = String(row[8] || "").trim();
+      const statusRaw = row[8] || "";
       const hasResult = legsA > 0 || legsB > 0;
 
       const game = {
@@ -94,10 +100,11 @@ function buildGames(rows) {
         spielerB: row[5] || "",
         legsA,
         legsB,
-        status: rawStatus || (hasResult ? "Gespielt" : "Offen")
+        status: statusRaw || (hasResult ? "Gespielt" : "Offen")
       };
 
       game.league = normalizeLeague(game.plattform, game.liga);
+
       return game;
     })
     .filter(game => game.spielerA && game.spielerB && game.league !== "Unbekannt");
@@ -105,7 +112,13 @@ function buildGames(rows) {
 
 function isPlayed(game) {
   const status = String(game.status || "").toLowerCase();
-  return status.includes("gespielt") || status.includes("beendet") || game.legsA > 0 || game.legsB > 0;
+
+  return (
+    status.includes("gespielt") ||
+    status.includes("beendet") ||
+    game.legsA > 0 ||
+    game.legsB > 0
+  );
 }
 
 function createPlayer(name) {
@@ -122,11 +135,19 @@ function createPlayer(name) {
 
 function calculateTable(games, leagueName) {
   const players = {};
-  const leagueGames = games.filter(game => game.league === leagueName && isPlayed(game));
+
+  const leagueGames = games.filter(
+    game => game.league === leagueName && isPlayed(game)
+  );
 
   leagueGames.forEach(game => {
-    if (!players[game.spielerA]) players[game.spielerA] = createPlayer(game.spielerA);
-    if (!players[game.spielerB]) players[game.spielerB] = createPlayer(game.spielerB);
+    if (!players[game.spielerA]) {
+      players[game.spielerA] = createPlayer(game.spielerA);
+    }
+
+    if (!players[game.spielerB]) {
+      players[game.spielerB] = createPlayer(game.spielerB);
+    }
 
     const playerA = players[game.spielerA];
     const playerB = players[game.spielerB];
@@ -136,6 +157,7 @@ function calculateTable(games, leagueName) {
 
     playerA.legsPlus += game.legsA;
     playerA.legsMinus += game.legsB;
+
     playerB.legsPlus += game.legsB;
     playerB.legsMinus += game.legsA;
 
@@ -153,9 +175,12 @@ function calculateTable(games, leagueName) {
   return Object.values(players).sort((a, b) => {
     if (b.punkte !== a.punkte) return b.punkte - a.punkte;
     if (b.siege !== a.siege) return b.siege - a.siege;
-    if ((b.legsPlus - b.legsMinus) !== (a.legsPlus - a.legsMinus)) {
-      return (b.legsPlus - b.legsMinus) - (a.legsPlus - a.legsMinus);
-    }
+
+    const diffA = a.legsPlus - a.legsMinus;
+    const diffB = b.legsPlus - b.legsMinus;
+
+    if (diffB !== diffA) return diffB - diffA;
+
     return b.legsPlus - a.legsPlus;
   });
 }
@@ -168,11 +193,12 @@ function renderLeagueTable() {
   if (!tbody || !status || !title) return;
 
   const tableData = calculateTable(allGames, selectedLeague);
+
   tbody.innerHTML = "";
   title.textContent = `${leagueLabels[selectedLeague]} Tabelle`;
 
   if (!tableData.length) {
-    status.textContent = "Noch keine Ergebnisse für diese Liga vorhanden.";
+    status.textContent = "Noch keine Ergebnisse vorhanden.";
     return;
   }
 
@@ -181,10 +207,8 @@ function renderLeagueTable() {
   tableData.forEach((player, index) => {
     const rank = index + 1;
     const diff = player.legsPlus - player.legsMinus;
-    const tr = document.createElement("tr");
 
-    if (rank === 3) tr.classList.add("cut-top");
-    if (tableData.length >= 4 && rank === tableData.length - 1) tr.classList.add("cut-bottom");
+    const tr = document.createElement("tr");
 
     tr.innerHTML = `
       <td class="rank">${rank}</td>
@@ -208,11 +232,80 @@ function initLeagueSwitch() {
   buttons.forEach(button => {
     button.addEventListener("click", () => {
       selectedLeague = button.dataset.league;
+
       buttons.forEach(btn => btn.classList.remove("active"));
+
       button.classList.add("active");
+
       renderLeagueTable();
     });
   });
+}
+
+// SPIELTAG FILTER
+
+function renderMatchdayButtons(games) {
+  const container = document.getElementById("matchdayButtons");
+
+  if (!container) return;
+
+  const uniqueMatchdays = [
+    ...new Set(games.map(g => g.spieltag).filter(Boolean))
+  ].sort((a, b) => Number(b) - Number(a));
+
+  container.innerHTML = "";
+
+  uniqueMatchdays.forEach(day => {
+    const btn = document.createElement("button");
+
+    btn.className = "matchday-btn";
+    btn.dataset.matchday = day;
+    btn.textContent = `Spieltag ${day}`;
+
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".matchday-btn")
+        .forEach(b => b.classList.remove("active"));
+
+      btn.classList.add("active");
+
+      renderFilteredMatchdays(day);
+    });
+
+    container.appendChild(btn);
+  });
+
+  const allBtn = document.querySelector('[data-matchday="all"]');
+
+  if (allBtn) {
+    allBtn.addEventListener("click", () => {
+      document.querySelectorAll(".matchday-btn")
+        .forEach(b => b.classList.remove("active"));
+
+      allBtn.classList.add("active");
+
+      renderFilteredMatchdays("all");
+    });
+  }
+}
+
+function renderFilteredMatchdays(matchday) {
+  let filteredGames = allGames;
+
+  if (matchday !== "all") {
+    filteredGames = allGames.filter(
+      game => String(game.spieltag) === String(matchday)
+    );
+  }
+
+  renderMatchdays(filteredGames);
+}
+
+function getStatusClass(game) {
+  return isPlayed(game) ? "done" : "open";
+}
+
+function getStatusText(game) {
+  return isPlayed(game) ? "Gespielt" : "Offen";
 }
 
 function renderMatchdays(games) {
@@ -224,7 +317,7 @@ function renderMatchdays(games) {
   tbody.innerHTML = "";
 
   if (!games.length) {
-    status.textContent = "Noch keine Spieltage vorhanden.";
+    status.textContent = "Keine Spiele gefunden.";
     return;
   }
 
@@ -232,11 +325,10 @@ function renderMatchdays(games) {
 
   games.forEach(game => {
     const played = isPlayed(game);
-    const aWon = played && game.legsA > game.legsB;
-    const bWon = played && game.legsB > game.legsA;
-    const result = played ? `${game.legsA} : ${game.legsB}` : "-";
-    const statusClass = played ? "done" : "open";
-    const statusText = played ? "Gespielt" : (game.status || "Offen");
+
+    const result = played
+      ? `${game.legsA} : ${game.legsB}`
+      : "-";
 
     const tr = document.createElement("tr");
 
@@ -244,10 +336,14 @@ function renderMatchdays(games) {
       <td>${game.spieltag || "-"}</td>
       <td>${game.zeitraum || "-"}</td>
       <td>${leagueLabels[game.league] || game.league}</td>
-      <td class="${aWon ? "winner" : ""}">${game.spielerA}</td>
+      <td>${game.spielerA}</td>
       <td>${result}</td>
-      <td class="${bWon ? "winner" : ""}">${game.spielerB}</td>
-      <td><span class="tag ${statusClass}">${statusText}</span></td>
+      <td>${game.spielerB}</td>
+      <td>
+        <span class="tag ${getStatusClass(game)}">
+          ${getStatusText(game)}
+        </span>
+      </td>
     `;
 
     tbody.appendChild(tr);
@@ -257,23 +353,38 @@ function renderMatchdays(games) {
 async function loadData() {
   try {
     const response = await fetch(CSV_URL);
-    if (!response.ok) throw new Error("CSV konnte nicht geladen werden.");
+
+    if (!response.ok) {
+      throw new Error("CSV konnte nicht geladen werden.");
+    }
 
     const text = await response.text();
+
     const rows = parseCSV(text);
+
     allGames = buildGames(rows);
 
     initLeagueSwitch();
+
     renderLeagueTable();
-    renderMatchdays(allGames);
+
+    renderMatchdayButtons(allGames);
+
+    renderFilteredMatchdays("all");
+
   } catch (error) {
+    console.error(error);
+
     const tableStatus = document.getElementById("leagueStatus");
     const matchdaysStatus = document.getElementById("matchdaysStatus");
 
-    if (tableStatus) tableStatus.textContent = "Fehler beim Laden. Prüfe Google Sheet und Spaltenreihenfolge.";
-    if (matchdaysStatus) matchdaysStatus.textContent = "Fehler beim Laden. Prüfe Google Sheet und Spaltenreihenfolge.";
+    if (tableStatus) {
+      tableStatus.textContent = "Fehler beim Laden.";
+    }
 
-    console.error(error);
+    if (matchdaysStatus) {
+      matchdaysStatus.textContent = "Fehler beim Laden.";
+    }
   }
 }
 
